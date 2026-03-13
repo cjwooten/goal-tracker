@@ -132,8 +132,14 @@
   .steps-wrap { padding: 14px 16px 4px; }
 
   .step-row { display: flex; align-items: stretch; position: relative; border-radius: 6px; }
-  .step-row.drag-over { background: var(--bg2); }
   .step-row.dragging  { opacity: 0.4; }
+  .step-row.drop-above::before,
+  .step-row.drop-below::after {
+    content: ''; position: absolute; left: 0; right: 0; height: 2px;
+    background: #185FA5; border-radius: 1px; z-index: 2;
+  }
+  .step-row.drop-above::before { top: -1px; }
+  .step-row.drop-below::after  { bottom: -1px; }
 
   .drag-handle { cursor: grab; color: var(--text3); font-size: 11px; padding: 2px 5px 0 0; flex-shrink: 0; user-select: none; opacity: 0; transition: opacity 0.15s; align-self: flex-start; margin-top: 2px; }
   .step-row:hover .drag-handle { opacity: 0.4; }
@@ -210,6 +216,35 @@
   .archived-divider { display: flex; align-items: center; gap: 10px; padding: 4px 2px; }
   .archived-divider span { font-size: 10px; color: var(--text3); white-space: nowrap; text-transform: uppercase; letter-spacing: 0.06em; }
   .archived-divider::before, .archived-divider::after { content: ''; flex: 1; height: 0.5px; background: var(--border2); }
+
+  /* step up/down buttons — mobile only */
+  .step-move-btns { display: none; flex-direction: column; gap: 0; flex-shrink: 0; align-self: flex-start; }
+  .step-move-btn { background: none; border: none; cursor: pointer; color: var(--text3); padding: 7px 6px; border-radius: 4px; display: flex; align-items: center; transition: color 0.12s, background 0.12s; }
+  .step-move-btn:active { color: var(--text1); background: var(--bg2); }
+  .step-move-btn:disabled { opacity: 0.2; pointer-events: none; }
+
+  /* three-dot goal menu — mobile only */
+  .goal-menu-btn { display: none; background: none; border: none; cursor: pointer; color: var(--text2); padding: 7px 6px; border-radius: 6px; align-items: center; flex-shrink: 0; transition: background 0.15s; }
+  .goal-menu-btn:active { background: var(--bg2); }
+
+  /* ≤500px mobile breakpoint */
+  @media (max-width: 500px) {
+    /* prevent iOS zoom on input focus (font-size must be ≥16px) */
+    .add-input, .step-title-input, .step-dur-input, .goal-name-input,
+    .field input, .field select { font-size: 16px !important; }
+    /* hide hover-reveal desktop controls */
+    .goal-move-btns, .goal-icon-btn { display: none !important; }
+    /* show three-dot menu */
+    .goal-menu-btn { display: flex; }
+    /* disable tap-to-rename goal title (use menu Rename instead) */
+    .goal-name-view { pointer-events: none; cursor: default; }
+    .goal-name-view:hover { background: transparent; }
+    /* swap drag handle for up/down reorder buttons */
+    .drag-handle { display: none; }
+    .step-move-btns { display: flex; }
+    /* always show step delete button (no hover state on touch) */
+    .step-del-btn { opacity: 1 !important; padding: 6px 8px; }
+  }
 </style>
 </head>
 <body>
@@ -229,7 +264,7 @@
 <script>
 let gid=1,sid=1,dragging=null,dragGoalId=null;
 const STATUSES=['blocked','active','waiting','done'];
-const STORE_KEY='goal-tracker-v3.2-share';
+const STORE_KEY='goal-tracker-v3.4-share';
 
 const DEFAULT_DATA={
   gid:6,sid:25,
@@ -329,6 +364,7 @@ function badgeLabel(st){return{done:'done',active:'up next',waiting:'waiting',bl
 const ICON_ARCHIVE  =`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4.5" width="11" height="7" rx="1"/><polyline points="1,4.5 2,1.5 11,1.5 12,4.5"/><line x1="6.5" y1="6.5" x2="6.5" y2="9.5"/><polyline points="4.5,8 6.5,9.5 8.5,8"/></svg>`;
 const ICON_UNARCHIVE=`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4.5" width="11" height="7" rx="1"/><polyline points="1,4.5 2,1.5 11,1.5 12,4.5"/><line x1="6.5" y1="9.5" x2="6.5" y2="6.5"/><polyline points="4.5,8 6.5,6.5 8.5,8"/></svg>`;
 const ICON_TRASH    =`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,3 11.5,3"/><path d="M4 3V2a.5.5 0 0 1 .5-.5h4A.5.5 0 0 1 9 2v1"/><rect x="2.5" y="3" width="8" height="8.5" rx="1"/><line x1="5" y1="5.5" x2="5" y2="9.5"/><line x1="8" y1="5.5" x2="8" y2="9.5"/></svg>`;
+const ICON_MENU     =`<svg width="15" height="15" viewBox="0 0 15 15" fill="currentColor"><circle cx="3.5" cy="7.5" r="1.35"/><circle cx="7.5" cy="7.5" r="1.35"/><circle cx="11.5" cy="7.5" r="1.35"/></svg>`;
 
 function renderSpineOnly(g){
   if(!g.steps.length) return `<div class="spine-only"><span style="font-size:12px;color:var(--text3)">No steps yet — click to expand and add one.</span></div>`;
@@ -344,13 +380,17 @@ function renderSpineOnly(g){
   </div>`;
 }
 
-function renderStep(g,s,isLast){
+function renderStep(g,s,isFirst,isLast){
   const tag=s.status==='active'?`<span class="tag tag-active">do this now</span>`
            :s.status==='waiting'?`<span class="tag tag-wait">passive wait</span>`
            :s.status==='done'?`<span class="tag tag-done">done</span>`:'';
   return`<div class="step-row" id="sr-${g.id}-${s.id}" draggable="true"
     ondragstart="dStart(event,${g.id},${s.id})" ondragend="dEnd()"
     ondragover="dOver(event,${g.id},${s.id})" ondrop="dDrop(event,${g.id},${s.id})">
+    <div class="step-move-btns" onclick="event.stopPropagation()">
+      <button class="step-move-btn" onclick="moveStep(${g.id},${s.id},-1)" title="Move up" ${isFirst?'disabled':''}><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,8 6,3.5 10,8"/></svg></button>
+      <button class="step-move-btn" onclick="moveStep(${g.id},${s.id},1)" title="Move down" ${isLast?'disabled':''}><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,4 6,8.5 10,4"/></svg></button>
+    </div>
     <span class="drag-handle" title="Drag to reorder">⠿</span>
     <div class="step-spine">
       <div class="step-dot ${s.status}" onclick="cycleStatus(${g.id},${s.id})" title="Click to cycle status">${dotSvg(s.status)}</div>
@@ -363,8 +403,8 @@ function renderStep(g,s,isLast){
         ${tag}
       </div>
       <div class="step-actions">
-        ${pill('+ before',`openInsertAt(${g.id},${s.id},true)`)}
-        ${pill('+ after',`openInsertAt(${g.id},${s.id})`)}
+        ${pill('+ before',`insertStepInline(${g.id},${s.id},true)`)}
+        ${pill('+ after',`insertStepInline(${g.id},${s.id})`)}
         <button class="step-del-btn" onclick="deleteStep(${g.id},${s.id})" title="Delete step">${ICON_TRASH}</button>
       </div>
     </div>
@@ -381,6 +421,7 @@ function renderGoal(g,idx,activeGoals){
   </div>`;
   const archiveBtn=`<button class="goal-icon-btn goal-archive-btn" onclick="event.stopPropagation();openArchiveGoal(${g.id})" title="Archive goal">${ICON_ARCHIVE}</button>`;
   const trashBtn=`<button class="goal-icon-btn goal-del-btn" onclick="event.stopPropagation();openDeleteGoal(${g.id})" title="Delete goal">${ICON_TRASH}</button>`;
+  const menuBtn=`<button class="goal-menu-btn" onclick="event.stopPropagation();openGoalMenu(${g.id},this,false)" title="Options">${ICON_MENU}</button>`;
 
   // expanded=true → full detail view; expanded=false → spine view (always show body)
   const bodyContent=g.expanded
@@ -393,8 +434,8 @@ function renderGoal(g,idx,activeGoals){
         </div>
       </div>`:''}
      <div class="progress-bar"><div class="progress-fill" style="width:${p}%"></div></div>
-     <div class="steps-wrap">${g.steps.map((s,i)=>renderStep(g,s,i===g.steps.length-1)).join('')||'<div style="padding:8px 0 8px 30px;font-size:12px;color:var(--text2)">No steps yet — add one below.</div>'}</div>
-     <div class="add-row"><input class="add-input" id="ai-${g.id}" placeholder="+ Add step at end — press Enter" onkeydown="handleAdd(event,${g.id})"></div>`
+     <div class="steps-wrap">${g.steps.map((s,i)=>renderStep(g,s,i===0,i===g.steps.length-1)).join('')}</div>
+     <div class="add-row"><input class="add-input" id="ai-${g.id}" placeholder="+ add step" onkeydown="handleAdd(event,${g.id})" onblur="handleAdd(event,${g.id})"></div>`
     :renderSpineOnly(g);
 
   return`<div class="goal-card${g.expanded?' expanded':''}" id="gc-${g.id}">
@@ -407,6 +448,7 @@ function renderGoal(g,idx,activeGoals){
       ${moveBtns}
       ${archiveBtn}
       ${trashBtn}
+      ${menuBtn}
       <span class="status-badge ${badgeClass(gs)}">${badgeLabel(gs)}</span>
       <span class="chevron">▶</span>
     </div>
@@ -419,6 +461,7 @@ function renderArchivedGoal(g){
   const done=g.steps.filter(s=>s.status==='done').length;
   const unarchiveBtn=`<button class="goal-icon-btn goal-archive-btn" onclick="doUnarchiveGoal(${g.id})" title="Restore goal">${ICON_UNARCHIVE}</button>`;
   const trashBtn=`<button class="goal-icon-btn goal-del-btn" onclick="openDeleteGoal(${g.id})" title="Delete goal">${ICON_TRASH}</button>`;
+  const menuBtn=`<button class="goal-menu-btn" onclick="openGoalMenu(${g.id},this,true)" title="Options">${ICON_MENU}</button>`;
   return`<div class="goal-card archived" id="gc-${g.id}">
     <div class="goal-header">
       ${ring(p,'blocked')}
@@ -428,6 +471,7 @@ function renderArchivedGoal(g){
       </div>
       ${unarchiveBtn}
       ${trashBtn}
+      ${menuBtn}
       <span class="status-badge s-archived">archived</span>
     </div>
   </div>`;
@@ -467,6 +511,58 @@ function moveGoal(id,dir){
   [goals[gi],goals[gni]]=[goals[gni],goals[gi]];
   render();
 }
+function moveStep(gId,sId,dir){
+  const g=goals.find(x=>x.id===gId);
+  const i=g.steps.findIndex(s=>s.id===sId);
+  const ni=i+dir;
+  if(ni<0||ni>=g.steps.length)return;
+  [g.steps[i],g.steps[ni]]=[g.steps[ni],g.steps[i]];
+  render();
+}
+
+function menuItem(icon,label,onclick,disabled,danger){
+  const col=danger?'#dc2626':'inherit';
+  const op=disabled?'0.3':'1';
+  const pe=disabled?'none':'auto';
+  return`<div onclick="${onclick}" style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:6px;font-size:14px;color:${col};cursor:${disabled?'default':'pointer'};opacity:${op};pointer-events:${pe};font-family:var(--font);user-select:none" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background=''">${icon}<span>${label}</span></div>`;
+}
+function openGoalMenu(id,btn,archived){
+  closeModal();
+  const g=goals.find(x=>x.id===id);if(!g)return;
+  const rect=btn.getBoundingClientRect();
+  const right=Math.round(window.innerWidth-rect.right);
+  const ICO_UP    =`<svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="3,10 7.5,5 12,10"/></svg>`;
+  const ICO_DN    =`<svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="3,5 7.5,10 12,5"/></svg>`;
+  const ICO_PEN   =`<svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 2.5l2 2L5 12H3v-2L10.5 2.5z"/></svg>`;
+  const ICO_ARC   =`<svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="5.5" width="13" height="8" rx="1"/><polyline points="1,5.5 2.5,2 12.5,2 14,5.5"/><line x1="7.5" y1="7.5" x2="7.5" y2="11"/><polyline points="5.5,9.5 7.5,11 9.5,9.5"/></svg>`;
+  const ICO_UNARC =`<svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="5.5" width="13" height="8" rx="1"/><polyline points="1,5.5 2.5,2 12.5,2 14,5.5"/><line x1="7.5" y1="11" x2="7.5" y2="7.5"/><polyline points="5.5,9 7.5,7.5 9.5,9"/></svg>`;
+  const ICO_DEL   =`<svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,4 13,4"/><path d="M5.5 4V3a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v1"/><rect x="3" y="4" width="9" height="9.5" rx="1"/><line x1="6.5" y1="7" x2="6.5" y2="11"/><line x1="8.5" y1="7" x2="8.5" y2="11"/></svg>`;
+  const sep=`<div style="height:0.5px;background:var(--border1);margin:3px 0"></div>`;
+  let html='';
+  if(!archived){
+    const active=goals.filter(x=>!x.archived);
+    const idx=active.findIndex(x=>x.id===id);
+    html+=menuItem(ICO_UP,'Move up',`closeModal();moveGoal(${id},-1)`,idx===0);
+    html+=menuItem(ICO_DN,'Move down',`closeModal();moveGoal(${id},1)`,idx===active.length-1);
+    html+=sep;
+    html+=menuItem(ICO_PEN,'Rename',`closeModal();editGoalName(${id})`);
+    html+=menuItem(ICO_ARC,'Archive',`closeModal();openArchiveGoal(${id})`);
+    html+=sep;
+    html+=menuItem(ICO_DEL,'Delete',`closeModal();openDeleteGoal(${id})`,false,true);
+  } else {
+    html+=menuItem(ICO_UNARC,'Unarchive',`closeModal();doUnarchiveGoal(${id})`);
+    html+=sep;
+    html+=menuItem(ICO_DEL,'Delete',`closeModal();openDeleteGoal(${id})`,false,true);
+  }
+  const estH=archived?130:280;
+  const top=window.innerHeight-rect.bottom>estH?Math.round(rect.bottom+6):Math.round(rect.top-estH-6);
+  document.getElementById('modal-container').innerHTML=`
+    <div style="position:fixed;inset:0;z-index:50" onclick="closeModal()">
+      <div style="position:fixed;top:${top}px;right:${right}px;background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius-lg);padding:4px;min-width:185px;box-shadow:0 6px 28px rgba(0,0,0,0.16);z-index:51" onclick="event.stopPropagation()">
+        ${html}
+      </div>
+    </div>`;
+}
 
 function editGoalName(id){
   const g=goals.find(x=>x.id===id);
@@ -500,40 +596,60 @@ function editDur(gId,sId){
   inp.addEventListener('keydown',e=>{if(e.key==='Enter')inp.blur();if(e.key==='Escape')inp.blur();});
 }
 function handleAdd(e,gId){
-  if(e.key!=='Enter')return;
-  const inp=document.getElementById(`ai-${gId}`);const title=inp.value.trim();if(!title)return;
+  if(e.type==='keydown'&&e.key!=='Enter')return;
+  const inp=document.getElementById(`ai-${gId}`);
+  const title=inp.value.trim();if(!title)return;
   const g=goals.find(x=>x.id===gId);
   g.steps.push({id:sid++,title,status:'blocked',dur:'',wait:false});
   inp.value='';render();
-  setTimeout(()=>{const el=document.getElementById(`ai-${gId}`);if(el)el.focus();},30);
+  // re-focus after Enter (keyboard stays open); skip on blur (keyboard already dismissing)
+  if(e.type==='keydown')setTimeout(()=>{const el=document.getElementById(`ai-${gId}`);if(el)el.focus();},30);
 }
 
 function dStart(e,gId,sId){dragging=sId;dragGoalId=gId;setTimeout(()=>{const el=document.getElementById(`sr-${gId}-${sId}`);if(el)el.classList.add('dragging');},0);e.dataTransfer.effectAllowed='move';}
-function dEnd(){document.querySelectorAll('.step-row').forEach(el=>el.classList.remove('dragging','drag-over'));dragging=null;dragGoalId=null;}
-function dOver(e,gId,sId){if(!dragging||gId!==dragGoalId)return;e.preventDefault();e.dataTransfer.dropEffect='move';document.querySelectorAll('.step-row').forEach(el=>el.classList.remove('drag-over'));const el=document.getElementById(`sr-${gId}-${sId}`);if(el&&sId!==dragging)el.classList.add('drag-over');}
-function dDrop(e,gId,sId){if(!dragging||gId!==dragGoalId||sId===dragging)return;e.preventDefault();const g=goals.find(x=>x.id===gId);const fi=g.steps.findIndex(s=>s.id===dragging),ti=g.steps.findIndex(s=>s.id===sId);const[item]=g.steps.splice(fi,1);g.steps.splice(ti,0,item);render();}
-
-function openInsertAt(gId,afterSid,before=false){
-  const label=before?'Insert step before':'Insert step after';
-  document.getElementById('modal-container').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeModal()">
-    <div class="modal">
-      <h3>${label}</h3>
-      <div class="field"><label>Step description</label><input id="ins-title" autofocus placeholder="What needs to happen?" onkeydown="if(event.key==='Enter')doInsert(${gId},${afterSid},${before})"></div>
-      <div class="field"><label>Estimated time (optional)</label><input id="ins-dur" placeholder="e.g. 10 min, 2–3 days" onkeydown="if(event.key==='Enter')doInsert(${gId},${afterSid},${before})"></div>
-      <div class="field"><label>Type</label><select id="ins-wait"><option value="0">Action — something to do</option><option value="1">Passive wait — nothing to do</option></select></div>
-      <div class="modal-actions"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="doInsert(${gId},${afterSid},${before})">Insert</button></div>
-    </div>
-  </div>`;
-  setTimeout(()=>document.getElementById('ins-title').focus(),30);
+function dEnd(){document.querySelectorAll('.step-row').forEach(el=>el.classList.remove('dragging','drop-above','drop-below'));dragging=null;dragGoalId=null;}
+function dOver(e,gId,sId){
+  if(!dragging||gId!==dragGoalId)return;e.preventDefault();e.dataTransfer.dropEffect='move';
+  document.querySelectorAll('.step-row').forEach(el=>el.classList.remove('drop-above','drop-below'));
+  if(sId===dragging)return;
+  const el=document.getElementById(`sr-${gId}-${sId}`);if(!el)return;
+  const rect=el.getBoundingClientRect();
+  el.classList.add(e.clientY<rect.top+rect.height/2?'drop-above':'drop-below');
 }
-function doInsert(gId,afterSid,before=false){
-  const title=document.getElementById('ins-title').value.trim();if(!title)return;
-  const dur=document.getElementById('ins-dur').value.trim();
-  const wait=document.getElementById('ins-wait').value==='1';
+function dDrop(e,gId,sId){
+  if(!dragging||gId!==dragGoalId||sId===dragging)return;e.preventDefault();
+  const el=document.getElementById(`sr-${gId}-${sId}`);
+  const rect=el?el.getBoundingClientRect():null;
+  const insertBefore=rect?e.clientY<rect.top+rect.height/2:true;
   const g=goals.find(x=>x.id===gId);
-  const idx=g.steps.findIndex(s=>s.id===afterSid);
-  g.steps.splice(before?idx:idx+1,0,{id:sid++,title,status:'blocked',dur,wait});
-  closeModal();render();
+  const fi=g.steps.findIndex(s=>s.id===dragging);
+  const[item]=g.steps.splice(fi,1);
+  const ti=g.steps.findIndex(s=>s.id===sId);
+  g.steps.splice(insertBefore?ti:ti+1,0,item);
+  render();
+}
+
+function insertStepInline(gId,refSid,before=false){
+  const g=goals.find(x=>x.id===gId);
+  const idx=g.steps.findIndex(s=>s.id===refSid);
+  const newStep={id:sid++,title:'',status:'blocked',dur:'',wait:false};
+  g.steps.splice(before?idx:idx+1,0,newStep);
+  render();
+  setTimeout(()=>editNewStepTitle(gId,newStep.id),20);
+}
+function editNewStepTitle(gId,sId){
+  const g=goals.find(x=>x.id===gId),s=g&&g.steps.find(x=>x.id===sId);if(!s)return;
+  const view=document.getElementById(`tv-${gId}-${sId}`);if(!view)return;
+  const inp=document.createElement('input');
+  inp.className='step-title-input';inp.value='';inp.placeholder='Step description…';
+  view.replaceWith(inp);inp.focus();
+  const cancel=()=>{g.steps=g.steps.filter(x=>x.id!==sId);render();};
+  const commit=()=>{const v=inp.value.trim();if(v){s.title=v;render();}else{cancel();}};
+  inp.addEventListener('blur',commit);
+  inp.addEventListener('keydown',e=>{
+    if(e.key==='Enter')inp.blur();
+    if(e.key==='Escape'){inp.removeEventListener('blur',commit);cancel();}
+  });
 }
 
 function openNewGoal(){
