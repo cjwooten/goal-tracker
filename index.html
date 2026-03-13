@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Goal Tracker</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #ffffff;
+    --bg2:       #f5f4f0;
+    --bg3:       #efede8;
+    --border1:   rgba(0,0,0,0.08);
+    --border2:   rgba(0,0,0,0.15);
+    --border3:   rgba(0,0,0,0.25);
+    --text1:     #1a1a18;
+    --text2:     #5a5a56;
+    --text3:     #9a9892;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --font:      -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:      #1c1c1a;
+      --bg2:     #262624;
+      --bg3:     #2e2e2b;
+      --border1: rgba(255,255,255,0.07);
+      --border2: rgba(255,255,255,0.13);
+      --border3: rgba(255,255,255,0.22);
+      --text1:   #e8e6df;
+      --text2:   #9a9890;
+      --text3:   #5e5d58;
+    }
+  }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg3);
+    color: var(--text1);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+
+  .container { max-width: 680px; margin: 0 auto; }
+
+  .page-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+  .page-title { font-size: 21px; font-weight: 500; color: var(--text1); }
+
+  .btn {
+    background: var(--bg); border: 0.5px solid var(--border2);
+    border-radius: var(--radius-md); padding: 7px 16px;
+    font-size: 13px; color: var(--text1); cursor: pointer;
+    font-family: var(--font); transition: background 0.15s; white-space: nowrap;
+  }
+  .btn:hover { background: var(--bg2); }
+  .btn-primary { background: #dbeeff; border-color: #93c5fd; color: #1d4ed8; }
+  .btn-primary:hover { opacity: 0.88; }
+
+  .goals-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .goal-card {
+    background: var(--bg); border: 0.5px solid var(--border1);
+    border-radius: var(--radius-lg); overflow: hidden; transition: border-color 0.15s;
+  }
+  .goal-card.expanded { border-color: var(--border2); }
+
+  /* archived card — dimmed, no expand interaction */
+  .goal-card.archived { opacity: 0.52; }
+  .goal-card.archived .goal-header { cursor: default; }
+  .goal-card.archived .goal-header:hover { background: transparent; }
+
+  .goal-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px; cursor: pointer; user-select: none;
+  }
+  .goal-header:hover { background: var(--bg2); }
+
+  .goal-meta { flex: 1; min-width: 0; }
+  .goal-name { font-size: 14px; font-weight: 500; color: var(--text1); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .goal-sub  { font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .goal-name-view { display: inline; cursor: text; border-radius: 3px; padding: 1px 3px; margin: -1px -3px; transition: background 0.12s; }
+  .goal-name-view:hover { background: var(--bg2); }
+  .goal-name-input { font-size: 14px; font-weight: 500; font-family: var(--font); color: var(--text1); border: 0.5px solid var(--border3); border-radius: 4px; padding: 1px 4px; background: var(--bg); outline: none; width: 100%; }
+
+  .status-badge { font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 500; flex-shrink: 0; }
+  .s-active   { background: #dbeeff; color: #1d4ed8; }
+  .s-waiting  { background: #fef3c7; color: #92400e; }
+  .s-done     { background: #d1fae5; color: #065f46; }
+  .s-blocked  { background: #f1f0ec; color: #5a5a56; }
+  .s-archived { background: #f1f0ec; color: #9a9892; }
+
+  .chevron { font-size: 10px; color: var(--text3); transition: transform 0.2s; flex-shrink: 0; }
+  .expanded .chevron { transform: rotate(90deg); }
+
+  .goal-body { border-top: 0.5px solid var(--border1); }
+
+  .next-banner {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 16px; background: var(--bg2);
+    border-bottom: 0.5px solid var(--border1);
+  }
+  .next-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  .next-label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 2px; }
+  .next-text  { font-size: 13px; font-weight: 500; color: var(--text1); line-height: 1.4; }
+  .next-dur   { font-size: 11px; color: var(--text2); margin-top: 2px; }
+
+  .progress-bar { height: 3px; background: var(--bg2); margin: 0 16px 2px; border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 2px; transition: width 0.4s; background: #1D9E75; }
+
+  /* spine view */
+  .spine-only { padding: 10px 16px; display: flex; align-items: center; }
+  .spine-dots { display: flex; align-items: center; flex: 1; min-width: 0; }
+  .spine-dot-sm { width: 12px; height: 12px; border-radius: 50%; border: 2px solid; flex-shrink: 0; }
+  .spine-dot-sm.done    { background: #1D9E75; border-color: #1D9E75; }
+  .spine-dot-sm.active  { background: #185FA5; border-color: #185FA5; }
+  .spine-dot-sm.waiting { background: #BA7517; border-color: #BA7517; }
+  .spine-dot-sm.blocked { background: var(--bg2); border-color: var(--border2); }
+  .spine-line-sm { flex: 1; height: 2px; min-width: 4px; }
+  .spine-line-sm.done    { background: #1D9E75; opacity: 0.35; }
+  .spine-line-sm.active  { background: #185FA5; opacity: 0.3; }
+  .spine-line-sm.waiting { background: #BA7517; opacity: 0.3; }
+  .spine-line-sm.blocked { background: var(--border1); }
+  .spine-label { font-size: 11px; color: var(--text2); margin-left: 10px; white-space: nowrap; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
+
+  /* expanded steps */
+  .steps-wrap { padding: 14px 16px 4px; }
+
+  .step-row { display: flex; align-items: stretch; position: relative; border-radius: 6px; }
+  .step-row.drag-over { background: var(--bg2); }
+  .step-row.dragging  { opacity: 0.4; }
+
+  .drag-handle { cursor: grab; color: var(--text3); font-size: 11px; padding: 2px 5px 0 0; flex-shrink: 0; user-select: none; opacity: 0; transition: opacity 0.15s; align-self: flex-start; margin-top: 2px; }
+  .step-row:hover .drag-handle { opacity: 0.4; }
+  .drag-handle:active { cursor: grabbing; }
+
+  .step-spine { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; width: 20px; }
+  .step-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid; flex-shrink: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.12s; z-index: 1; margin-top: 1px; }
+  .step-dot:hover { transform: scale(1.18); }
+  .step-dot.done    { background: #1D9E75; border-color: #1D9E75; }
+  .step-dot.active  { background: #185FA5; border-color: #185FA5; }
+  .step-dot.waiting { background: #BA7517; border-color: #BA7517; }
+  .step-dot.blocked { background: var(--bg2); border-color: var(--border2); }
+  .step-dot svg { width: 9px; height: 9px; }
+
+  .step-line { width: 2px; flex: 1; margin-top: 3px; border-radius: 1px; }
+  .step-line.done    { background: #1D9E75; opacity: 0.35; }
+  .step-line.active  { background: #185FA5; opacity: 0.3; }
+  .step-line.waiting { background: #BA7517; opacity: 0.3; }
+  .step-line.blocked { background: var(--border1); opacity: 1; }
+
+  .step-body { flex: 1; padding: 0 0 18px 10px; min-width: 0; }
+  .step-row:last-child .step-body { padding-bottom: 6px; }
+
+  .step-title-view { font-size: 13px; color: var(--text1); line-height: 1.4; cursor: text; border-radius: 3px; padding: 1px 3px; margin-left: -3px; transition: background 0.12s; display: inline-block; max-width: 100%; }
+  .step-title-view:hover { background: var(--bg2); }
+  .step-title-view.muted { color: var(--text2); }
+  .step-title-input { font-size: 13px; font-family: var(--font); color: var(--text1); line-height: 1.4; border: 0.5px solid var(--border3); border-radius: 4px; padding: 1px 4px; background: var(--bg); outline: none; width: 100%; }
+
+  .step-meta { display: flex; align-items: center; gap: 6px; margin-top: 3px; flex-wrap: wrap; }
+  .step-dur { font-size: 11px; color: var(--text2); cursor: text; border-radius: 3px; padding: 1px 3px; margin-left: -3px; transition: background 0.12s; }
+  .step-dur:hover { background: var(--bg2); }
+  .step-dur.placeholder { color: var(--text3); font-style: italic; }
+  .step-dur-input { font-size: 11px; font-family: var(--font); color: var(--text2); border: 0.5px solid var(--border3); border-radius: 3px; padding: 1px 4px; background: var(--bg); outline: none; width: 90px; }
+
+  .tag { font-size: 10px; padding: 1px 6px; border-radius: 4px; border: 0.5px solid; font-weight: 500; }
+  .tag-wait   { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
+  .tag-active { background: #dbeeff; color: #1d4ed8; border-color: #93c5fd; }
+  .tag-done   { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
+
+  .step-actions { display: flex; align-items: center; gap: 4px; margin-top: 5px; }
+  .step-del-btn { background: none; border: none; cursor: pointer; color: var(--text3); padding: 2px 3px; border-radius: 4px; display: inline-flex; align-items: center; opacity: 0; transition: opacity 0.15s, color 0.15s, background 0.15s; flex-shrink: 0; }
+  .step-row:hover .step-del-btn { opacity: 1; }
+  .step-del-btn:hover { color: #dc2626 !important; background: #fee2e2; }
+
+  .add-row { padding: 4px 16px 12px; }
+  .add-input { width: 100%; border: 0.5px solid var(--border2); border-radius: var(--radius-md); padding: 8px 12px; font-size: 12px; font-family: var(--font); color: var(--text1); background: var(--bg2); outline: none; }
+  .add-input:focus { border-color: var(--border3); background: var(--bg); }
+  .add-input::placeholder { color: var(--text3); }
+
+  .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; z-index: 50; }
+  .modal { background: var(--bg); border: 0.5px solid var(--border2); border-radius: var(--radius-lg); padding: 1.5rem; width: 340px; max-width: 92vw; }
+  .modal h3 { font-size: 15px; font-weight: 500; margin-bottom: 1rem; }
+  .field { margin-bottom: 10px; }
+  .field label { font-size: 11px; color: var(--text2); display: block; margin-bottom: 3px; }
+  .field input, .field select { width: 100%; border: 0.5px solid var(--border2); border-radius: var(--radius-md); padding: 8px 10px; font-size: 13px; font-family: var(--font); color: var(--text1); background: var(--bg2); outline: none; appearance: none; }
+  .field input:focus, .field select:focus { border-color: var(--border3); background: var(--bg); }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1rem; }
+
+  .empty { text-align: center; padding: 3rem 1rem; color: var(--text2); font-size: 13px; }
+
+  /* goal header icon buttons */
+  .goal-icon-btn { background: none; border: none; cursor: pointer; color: var(--text3); padding: 3px 4px; border-radius: 4px; display: flex; align-items: center; flex-shrink: 0; opacity: 0; transition: opacity 0.15s, color 0.15s, background 0.15s; line-height: 1; }
+  .goal-header:hover .goal-icon-btn { opacity: 1; }
+  .goal-icon-btn:hover { color: var(--text1) !important; background: var(--bg3); }
+  .goal-icon-btn.goal-del-btn:hover     { color: #dc2626 !important; background: #fee2e2; }
+  .goal-icon-btn.goal-archive-btn:hover { color: #b45309 !important; background: #fef3c7; }
+  .goal-icon-btn:disabled { opacity: 0.2 !important; cursor: default; pointer-events: none; }
+
+  .goal-move-btns { display: flex; flex-direction: column; gap: 1px; opacity: 0; transition: opacity 0.15s; flex-shrink: 0; }
+  .goal-header:hover .goal-move-btns { opacity: 1; }
+
+
+  /* divider between active and archived sections */
+  .archived-divider { display: flex; align-items: center; gap: 10px; padding: 4px 2px; }
+  .archived-divider span { font-size: 10px; color: var(--text3); white-space: nowrap; text-transform: uppercase; letter-spacing: 0.06em; }
+  .archived-divider::before, .archived-divider::after { content: ''; flex: 1; height: 0.5px; background: var(--border2); }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="page-header">
+    <span class="page-title">Goal Tracker</span>
+    <div style="display:flex;gap:6px;align-items:center">
+      <button class="btn" onclick="openDataModal()" style="font-size:11px;padding:4px 11px;color:var(--text2)">Import / Export</button>
+      <button class="btn" onclick="openNewGoal()" style="font-size:12px;padding:5px 14px">+ New goal</button>
+    </div>
+    <input type="file" id="import-input" accept=".json" style="display:none" onchange="handleImportFile(event)">
+  </div>
+  <div class="goals-list" id="root"></div>
+</div>
+<div id="modal-container"></div>
+
+<script>
+let gid=1,sid=1,dragging=null,dragGoalId=null;
+const STATUSES=['blocked','active','waiting','done'];
+const STORE_KEY='goal-tracker-v3.2-share';
+
+const DEFAULT_DATA={
+  gid:6,sid:25,
+  goals:[
+    {id:1,name:"Launch my portfolio site",expanded:true,archived:false,archivedAt:null,steps:[
+      {id:1, title:"Buy a domain name",               status:"done",    dur:"15 min",   wait:false},
+      {id:2, title:"Choose a framework or template",  status:"done",    dur:"1 hr",     wait:false},
+      {id:3, title:"Write bio and about section",     status:"done",    dur:"45 min",   wait:false},
+      {id:4, title:"Add 3 project case studies",      status:"active",  dur:"2–3 hrs",  wait:false},
+      {id:5, title:"Set up contact form",             status:"blocked", dur:"30 min",   wait:false},
+      {id:6, title:"Deploy and go live",              status:"blocked", dur:"1 hr",     wait:false}
+    ]},
+    {id:2,name:"Australian road trip",expanded:false,archived:false,archivedAt:null,steps:[
+      {id:7, title:"Map out the route — Sydney to Cairns", status:"done",    dur:"2 hrs",    wait:false},
+      {id:8, title:"Book accommodation for first week",    status:"done",    dur:"1 hr",     wait:false},
+      {id:9, title:"Get car serviced and road-ready",      status:"active",  dur:"1 day",    wait:false},
+      {id:10,title:"Waiting on annual leave approval",     status:"waiting", dur:"2 weeks",  wait:true },
+      {id:11,title:"Pack and hit the road",                status:"blocked", dur:"1 day",    wait:false}
+    ]},
+    {id:3,name:"Move to a new city",expanded:false,archived:false,archivedAt:null,steps:[
+      {id:12,title:"Research neighborhoods and cost of living", status:"done",    dur:"2 hrs",    wait:false},
+      {id:13,title:"Set a moving budget",                       status:"done",    dur:"30 min",   wait:false},
+      {id:14,title:"Current lease expires",                     status:"waiting", dur:"3 months", wait:true },
+      {id:15,title:"Book movers and get quotes",                status:"blocked", dur:"1 hr",     wait:false},
+      {id:16,title:"Transfer utilities and update address",     status:"blocked", dur:"1 hr",     wait:false}
+    ]},
+    {id:4,name:"Build a side project",expanded:false,archived:false,archivedAt:null,steps:[
+      {id:17,title:"Define the core problem to solve",  status:"blocked", dur:"1 hr",     wait:false},
+      {id:18,title:"Sketch a rough prototype",          status:"blocked", dur:"2 hrs",    wait:false},
+      {id:19,title:"Interview 5 potential users",       status:"blocked", dur:"1 week",   wait:false},
+      {id:20,title:"Build the MVP",                     status:"blocked", dur:"2–4 wks",  wait:false},
+      {id:21,title:"Launch and get first 10 users",     status:"blocked", dur:"1–2 days", wait:false}
+    ]},
+    {id:5,name:"Read 12 books last year",expanded:false,archived:true,archivedAt:1704067200000,steps:[
+      {id:22,title:"Build a reading list",          status:"done", dur:"20 min", wait:false},
+      {id:23,title:"Read for 20 min every morning", status:"done", dur:"1 year", wait:false},
+      {id:24,title:"Hit 12 books — done!",          status:"done", dur:"",       wait:false}
+    ]}
+  ]
+};
+
+function save(){
+  try { localStorage.setItem(STORE_KEY, JSON.stringify({goals,gid,sid})); } catch(e){}
+}
+function load(){
+  try {
+    const raw=localStorage.getItem(STORE_KEY);
+    if(!raw){goals=DEFAULT_DATA.goals;gid=DEFAULT_DATA.gid;sid=DEFAULT_DATA.sid;return;}
+    const d=JSON.parse(raw);
+    goals=d.goals||[]; gid=d.gid||1; sid=d.sid||1;
+  } catch(e){}
+}
+
+let goals=[];
+
+function pill(label, onclick) {
+  return `<span onclick="${onclick}" style="
+    display:inline-block;font-size:10px;font-family:var(--font);color:var(--text2);
+    background:none;border:0.5px solid var(--border2);border-radius:20px;
+    padding:1px 7px 2px;line-height:1.5;cursor:pointer;white-space:nowrap;
+    user-select:none;transition:background 0.12s;
+  " onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='none'">${label}</span>`;
+}
+
+function goalStatus(g){
+  if(!g.steps.length)return'blocked';
+  if(g.steps.every(s=>s.status==='done'))return'done';
+  if(g.steps.find(s=>s.status==='active'))return'active';
+  if(g.steps.find(s=>s.status==='waiting'))return'waiting';
+  return'blocked';
+}
+function nextStep(g){return g.steps.find(s=>s.status==='active'||s.status==='waiting');}
+function pct(g){return!g.steps.length?0:Math.round(g.steps.filter(s=>s.status==='done').length/g.steps.length*100);}
+
+function dotSvg(st){
+  if(st==='done')   return`<svg viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  if(st==='active') return`<svg viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="2.5" fill="white"/></svg>`;
+  if(st==='waiting')return`<svg viewBox="0 0 10 10" fill="none"><line x1="5" y1="2" x2="5" y2="5.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/><circle cx="5" cy="7.5" r="1" fill="white"/></svg>`;
+  return'';
+}
+
+function ring(p,st){
+  const col=st==='done'?'#1D9E75':st==='active'?'#185FA5':st==='waiting'?'#BA7517':'#9a9892';
+  const c=2*Math.PI*11,dash=(p/100)*c;
+  return`<svg width="32" height="32" viewBox="0 0 32 32" style="display:block;flex-shrink:0">
+    <circle cx="16" cy="16" r="11" fill="none" stroke="var(--bg2)" stroke-width="3"/>
+    <circle cx="16" cy="16" r="11" fill="none" stroke="${col}" stroke-width="3"
+      stroke-dasharray="${dash.toFixed(1)} ${c.toFixed(1)}"
+      stroke-linecap="round" transform="rotate(-90 16 16)"/>
+    <text x="16" y="20" text-anchor="middle" font-size="8" font-family="var(--font)" fill="var(--text1)" font-weight="500">${p}%</text>
+  </svg>`;
+}
+
+function badgeClass(st){return{done:'s-done',active:'s-active',waiting:'s-waiting',blocked:'s-blocked'}[st];}
+function badgeLabel(st){return{done:'done',active:'up next',waiting:'waiting',blocked:'not started'}[st];}
+
+const ICON_ARCHIVE  =`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4.5" width="11" height="7" rx="1"/><polyline points="1,4.5 2,1.5 11,1.5 12,4.5"/><line x1="6.5" y1="6.5" x2="6.5" y2="9.5"/><polyline points="4.5,8 6.5,9.5 8.5,8"/></svg>`;
+const ICON_UNARCHIVE=`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4.5" width="11" height="7" rx="1"/><polyline points="1,4.5 2,1.5 11,1.5 12,4.5"/><line x1="6.5" y1="9.5" x2="6.5" y2="6.5"/><polyline points="4.5,8 6.5,6.5 8.5,8"/></svg>`;
+const ICON_TRASH    =`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,3 11.5,3"/><path d="M4 3V2a.5.5 0 0 1 .5-.5h4A.5.5 0 0 1 9 2v1"/><rect x="2.5" y="3" width="8" height="8.5" rx="1"/><line x1="5" y1="5.5" x2="5" y2="9.5"/><line x1="8" y1="5.5" x2="8" y2="9.5"/></svg>`;
+
+function renderSpineOnly(g){
+  if(!g.steps.length) return `<div class="spine-only"><span style="font-size:12px;color:var(--text3)">No steps yet — click to expand and add one.</span></div>`;
+  let dots='';
+  g.steps.forEach((s,i)=>{
+    if(i>0)dots+=`<div class="spine-line-sm ${g.steps[i-1].status}"></div>`;
+    dots+=`<div class="spine-dot-sm ${s.status}" title="${s.title}"></div>`;
+  });
+  const ns=nextStep(g);
+  return`<div class="spine-only">
+    <div class="spine-dots">${dots}</div>
+    ${ns?`<span class="spine-label">${ns.status==='waiting'?'waiting: ':'next: '}${ns.title}</span>`:''}
+  </div>`;
+}
+
+function renderStep(g,s,isLast){
+  const tag=s.status==='active'?`<span class="tag tag-active">do this now</span>`
+           :s.status==='waiting'?`<span class="tag tag-wait">passive wait</span>`
+           :s.status==='done'?`<span class="tag tag-done">done</span>`:'';
+  return`<div class="step-row" id="sr-${g.id}-${s.id}" draggable="true"
+    ondragstart="dStart(event,${g.id},${s.id})" ondragend="dEnd()"
+    ondragover="dOver(event,${g.id},${s.id})" ondrop="dDrop(event,${g.id},${s.id})">
+    <span class="drag-handle" title="Drag to reorder">⠿</span>
+    <div class="step-spine">
+      <div class="step-dot ${s.status}" onclick="cycleStatus(${g.id},${s.id})" title="Click to cycle status">${dotSvg(s.status)}</div>
+      ${!isLast?`<div class="step-line ${s.status}"></div>`:''}
+    </div>
+    <div class="step-body">
+      <div id="tv-${g.id}-${s.id}" class="step-title-view${s.status==='blocked'?' muted':''}" onclick="editTitle(${g.id},${s.id})" title="Click to edit">${s.title}</div>
+      <div class="step-meta">
+        <span class="step-dur${s.dur?'':' placeholder'}" onclick="editDur(${g.id},${s.id})" title="Click to edit">${s.dur||'add time est.'}</span>
+        ${tag}
+      </div>
+      <div class="step-actions">
+        ${pill('+ before',`openInsertAt(${g.id},${s.id},true)`)}
+        ${pill('+ after',`openInsertAt(${g.id},${s.id})`)}
+        <button class="step-del-btn" onclick="deleteStep(${g.id},${s.id})" title="Delete step">${ICON_TRASH}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderGoal(g,idx,activeGoals){
+  const gs=goalStatus(g),p=pct(g),ns=nextStep(g);
+  const done=g.steps.filter(s=>s.status==='done').length;
+  const isFirst=idx===0, isLast=idx===activeGoals.length-1;
+  const moveBtns=`<div class="goal-move-btns" onclick="event.stopPropagation()">
+    <button class="goal-icon-btn" onclick="moveGoal(${g.id},-1)" title="Move up" ${isFirst?'disabled':''}><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,7 5.5,3.5 9,7"/></svg></button>
+    <button class="goal-icon-btn" onclick="moveGoal(${g.id},1)" title="Move down" ${isLast?'disabled':''}><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,4 5.5,7.5 9,4"/></svg></button>
+  </div>`;
+  const archiveBtn=`<button class="goal-icon-btn goal-archive-btn" onclick="event.stopPropagation();openArchiveGoal(${g.id})" title="Archive goal">${ICON_ARCHIVE}</button>`;
+  const trashBtn=`<button class="goal-icon-btn goal-del-btn" onclick="event.stopPropagation();openDeleteGoal(${g.id})" title="Delete goal">${ICON_TRASH}</button>`;
+
+  // expanded=true → full detail view; expanded=false → spine view (always show body)
+  const bodyContent=g.expanded
+    ?`${ns?`<div class="next-banner">
+        <div class="next-dot" style="background:${ns.status==='waiting'?'#BA7517':'#185FA5'}"></div>
+        <div>
+          <div class="next-label">${ns.status==='waiting'?'Waiting on':'Next action'}</div>
+          <div class="next-text">${ns.title}</div>
+          ${ns.dur?`<div class="next-dur">${ns.dur}${ns.wait?' — nothing to do':''}</div>`:''}
+        </div>
+      </div>`:''}
+     <div class="progress-bar"><div class="progress-fill" style="width:${p}%"></div></div>
+     <div class="steps-wrap">${g.steps.map((s,i)=>renderStep(g,s,i===g.steps.length-1)).join('')||'<div style="padding:8px 0 8px 30px;font-size:12px;color:var(--text2)">No steps yet — add one below.</div>'}</div>
+     <div class="add-row"><input class="add-input" id="ai-${g.id}" placeholder="+ Add step at end — press Enter" onkeydown="handleAdd(event,${g.id})"></div>`
+    :renderSpineOnly(g);
+
+  return`<div class="goal-card${g.expanded?' expanded':''}" id="gc-${g.id}">
+    <div class="goal-header" onclick="toggleGoal(${g.id})">
+      ${ring(p,gs)}
+      <div class="goal-meta">
+        <div class="goal-name"><span class="goal-name-view" onclick="event.stopPropagation();editGoalName(${g.id})" title="Click to rename">${g.name}</span></div>
+        <div class="goal-sub">${done} of ${g.steps.length} steps complete</div>
+      </div>
+      ${moveBtns}
+      ${archiveBtn}
+      ${trashBtn}
+      <span class="status-badge ${badgeClass(gs)}">${badgeLabel(gs)}</span>
+      <span class="chevron">▶</span>
+    </div>
+    <div class="goal-body">${bodyContent}</div>
+  </div>`;
+}
+
+function renderArchivedGoal(g){
+  const p=pct(g);
+  const done=g.steps.filter(s=>s.status==='done').length;
+  const unarchiveBtn=`<button class="goal-icon-btn goal-archive-btn" onclick="doUnarchiveGoal(${g.id})" title="Restore goal">${ICON_UNARCHIVE}</button>`;
+  const trashBtn=`<button class="goal-icon-btn goal-del-btn" onclick="openDeleteGoal(${g.id})" title="Delete goal">${ICON_TRASH}</button>`;
+  return`<div class="goal-card archived" id="gc-${g.id}">
+    <div class="goal-header">
+      ${ring(p,'blocked')}
+      <div class="goal-meta">
+        <div class="goal-name">${g.name}</div>
+        <div class="goal-sub">${done} of ${g.steps.length} steps complete</div>
+      </div>
+      ${unarchiveBtn}
+      ${trashBtn}
+      <span class="status-badge s-archived">archived</span>
+    </div>
+  </div>`;
+}
+
+function render(){
+  const active=goals.filter(g=>!g.archived);
+  const archived=goals.filter(g=>g.archived).sort((a,b)=>b.archivedAt-a.archivedAt);
+  let html='';
+  if(!active.length&&!archived.length){
+    html=`<div class="empty">No goals yet — click "+ New goal" to start.</div>`;
+  } else {
+    html+=active.map((g,i)=>renderGoal(g,i,active)).join('');
+    if(archived.length){
+      if(active.length) html+=`<div class="archived-divider"><span>Archived</span></div>`;
+      html+=archived.map(g=>renderArchivedGoal(g)).join('');
+    }
+  }
+  document.getElementById('root').innerHTML=html;
+  save();
+}
+
+function toggleGoal(id){const g=goals.find(x=>x.id===id);if(g&&!g.archived)g.expanded=!g.expanded;render();}
+function cycleStatus(gId,sId){
+  const g=goals.find(x=>x.id===gId),s=g.steps.find(x=>x.id===sId);
+  s.status=STATUSES[(STATUSES.indexOf(s.status)+1)%STATUSES.length];render();
+}
+function deleteStep(gId,sId){const g=goals.find(x=>x.id===gId);g.steps=g.steps.filter(s=>s.id!==sId);render();}
+
+function moveGoal(id,dir){
+  const active=goals.filter(g=>!g.archived);
+  const i=active.findIndex(x=>x.id===id);
+  const ni=i+dir;
+  if(ni<0||ni>=active.length)return;
+  const gi=goals.indexOf(active[i]);
+  const gni=goals.indexOf(active[ni]);
+  [goals[gi],goals[gni]]=[goals[gni],goals[gi]];
+  render();
+}
+
+function editGoalName(id){
+  const g=goals.find(x=>x.id===id);
+  const span=document.querySelector(`#gc-${id} .goal-name-view`);if(!span)return;
+  const inp=document.createElement('input');
+  inp.className='goal-name-input';inp.value=g.name;
+  inp.onclick=e=>e.stopPropagation();
+  span.replaceWith(inp);inp.focus();inp.select();
+  const commit=()=>{const v=inp.value.trim();if(v)g.name=v;render();};
+  inp.addEventListener('blur',commit);
+  inp.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){e.stopPropagation();inp.blur();}
+    if(e.key==='Escape'){inp.value=g.name;inp.blur();}
+  });
+}
+function editTitle(gId,sId){
+  const g=goals.find(x=>x.id===gId),s=g.steps.find(x=>x.id===sId);
+  const view=document.getElementById(`tv-${gId}-${sId}`);if(!view)return;
+  const inp=document.createElement('input');inp.className='step-title-input';inp.value=s.title;
+  view.replaceWith(inp);inp.focus();inp.select();
+  const commit=()=>{const v=inp.value.trim();if(v)s.title=v;render();};
+  inp.addEventListener('blur',commit);
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter')inp.blur();if(e.key==='Escape'){inp.value=s.title;inp.blur();}});
+}
+function editDur(gId,sId){
+  const g=goals.find(x=>x.id===gId),s=g.steps.find(x=>x.id===sId);
+  const el=document.querySelector(`#sr-${gId}-${sId} .step-dur`);if(!el)return;
+  const inp=document.createElement('input');inp.className='step-dur-input';inp.value=s.dur||'';inp.placeholder='e.g. 10 min';
+  el.replaceWith(inp);inp.focus();inp.select();
+  inp.addEventListener('blur',()=>{s.dur=inp.value.trim();render();});
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter')inp.blur();if(e.key==='Escape')inp.blur();});
+}
+function handleAdd(e,gId){
+  if(e.key!=='Enter')return;
+  const inp=document.getElementById(`ai-${gId}`);const title=inp.value.trim();if(!title)return;
+  const g=goals.find(x=>x.id===gId);
+  g.steps.push({id:sid++,title,status:'blocked',dur:'',wait:false});
+  inp.value='';render();
+  setTimeout(()=>{const el=document.getElementById(`ai-${gId}`);if(el)el.focus();},30);
+}
+
+function dStart(e,gId,sId){dragging=sId;dragGoalId=gId;setTimeout(()=>{const el=document.getElementById(`sr-${gId}-${sId}`);if(el)el.classList.add('dragging');},0);e.dataTransfer.effectAllowed='move';}
+function dEnd(){document.querySelectorAll('.step-row').forEach(el=>el.classList.remove('dragging','drag-over'));dragging=null;dragGoalId=null;}
+function dOver(e,gId,sId){if(!dragging||gId!==dragGoalId)return;e.preventDefault();e.dataTransfer.dropEffect='move';document.querySelectorAll('.step-row').forEach(el=>el.classList.remove('drag-over'));const el=document.getElementById(`sr-${gId}-${sId}`);if(el&&sId!==dragging)el.classList.add('drag-over');}
+function dDrop(e,gId,sId){if(!dragging||gId!==dragGoalId||sId===dragging)return;e.preventDefault();const g=goals.find(x=>x.id===gId);const fi=g.steps.findIndex(s=>s.id===dragging),ti=g.steps.findIndex(s=>s.id===sId);const[item]=g.steps.splice(fi,1);g.steps.splice(ti,0,item);render();}
+
+function openInsertAt(gId,afterSid,before=false){
+  const label=before?'Insert step before':'Insert step after';
+  document.getElementById('modal-container').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <h3>${label}</h3>
+      <div class="field"><label>Step description</label><input id="ins-title" autofocus placeholder="What needs to happen?" onkeydown="if(event.key==='Enter')doInsert(${gId},${afterSid},${before})"></div>
+      <div class="field"><label>Estimated time (optional)</label><input id="ins-dur" placeholder="e.g. 10 min, 2–3 days" onkeydown="if(event.key==='Enter')doInsert(${gId},${afterSid},${before})"></div>
+      <div class="field"><label>Type</label><select id="ins-wait"><option value="0">Action — something to do</option><option value="1">Passive wait — nothing to do</option></select></div>
+      <div class="modal-actions"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="doInsert(${gId},${afterSid},${before})">Insert</button></div>
+    </div>
+  </div>`;
+  setTimeout(()=>document.getElementById('ins-title').focus(),30);
+}
+function doInsert(gId,afterSid,before=false){
+  const title=document.getElementById('ins-title').value.trim();if(!title)return;
+  const dur=document.getElementById('ins-dur').value.trim();
+  const wait=document.getElementById('ins-wait').value==='1';
+  const g=goals.find(x=>x.id===gId);
+  const idx=g.steps.findIndex(s=>s.id===afterSid);
+  g.steps.splice(before?idx:idx+1,0,{id:sid++,title,status:'blocked',dur,wait});
+  closeModal();render();
+}
+
+function openNewGoal(){
+  document.getElementById('modal-container').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <h3>New goal</h3>
+      <div class="field"><label>Goal name</label><input id="ng-name" autofocus placeholder="e.g. Find a new apartment" onkeydown="if(event.key==='Enter')doNewGoal()"></div>
+      <div class="modal-actions"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="doNewGoal()">Create</button></div>
+    </div>
+  </div>`;
+  setTimeout(()=>document.getElementById('ng-name').focus(),30);
+}
+function doNewGoal(){
+  const name=document.getElementById('ng-name').value.trim();if(!name)return;
+  goals.push({id:gid++,name,expanded:true,archived:false,archivedAt:null,steps:[]});
+  closeModal();render();
+}
+function closeModal(){document.getElementById('modal-container').innerHTML='';}
+
+function openArchiveGoal(id){
+  const g=goals.find(x=>x.id===id);if(!g)return;
+  document.getElementById('modal-container').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <h3>Archive goal?</h3>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:0.75rem;line-height:1.6"><strong style="color:var(--text1)">${g.name}</strong> will be moved to the bottom of your list, collapsed, and greyed out.</p>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;line-height:1.6">Your steps and progress are preserved. You can restore the goal at any time.</p>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeModal()">Cancel</button>
+        <button class="btn" style="background:#fef3c7;border-color:#fcd34d;color:#b45309" onclick="doArchiveGoal(${id})">Archive goal</button>
+      </div>
+    </div>
+  </div>`;
+}
+function doArchiveGoal(id){
+  const g=goals.find(x=>x.id===id);if(!g)return;
+  g.archived=true; g.archivedAt=Date.now(); g.expanded=false;
+  closeModal();render();
+}
+function doUnarchiveGoal(id){
+  const g=goals.find(x=>x.id===id);if(!g)return;
+  g.archived=false; g.archivedAt=null;
+  render();
+}
+
+function openDeleteGoal(id){
+  const g=goals.find(x=>x.id===id);if(!g)return;
+  document.getElementById('modal-container').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <h3>Delete goal?</h3>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;line-height:1.5">This will permanently delete <strong style="color:var(--text1)">${g.name}</strong> and all its steps. This can't be undone.</p>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeModal()">Cancel</button>
+        <button class="btn" style="background:#fee2e2;border-color:#fca5a5;color:#dc2626" onclick="doDeleteGoal(${id})">Delete goal</button>
+      </div>
+    </div>
+  </div>`;
+}
+function doDeleteGoal(id){goals=goals.filter(x=>x.id!==id);closeModal();render();}
+
+function exportData(){
+  const data=JSON.stringify({goals,gid,sid},null,2);
+  const a=document.createElement('a');
+  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(data);
+  const ts=new Date().toISOString().replace('T','_').replace(/:/g,'-').slice(0,19);
+  a.download=`goal-tracker-backup_${ts}.json`;
+  a.click();
+}
+function openDataModal(){
+  document.getElementById('modal-container').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <h3>Import / Export</h3>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:1rem">
+        <div style="border:0.5px solid var(--border2);border-radius:var(--radius-md);padding:14px">
+          <div style="font-size:13px;font-weight:500;color:var(--text1);margin-bottom:4px">Export</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px">Saves all your goals to a file on your device. Use this to back up your data or move it to another device.</div>
+          <button class="btn" onclick="closeModal();exportData()" style="font-size:12px">Download backup file</button>
+        </div>
+        <div style="border:0.5px solid var(--border2);border-radius:var(--radius-md);padding:14px">
+          <div style="font-size:13px;font-weight:500;color:var(--text1);margin-bottom:4px">Import</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px">Loads goals from a backup file. <strong style="color:var(--text1)">This replaces everything currently in your tracker.</strong> Only Goal Tracker export files (.json) are supported — other files won't work.</div>
+          <button class="btn" onclick="closeModal();importData()" style="font-size:12px">Choose backup file…</button>
+        </div>
+      </div>
+      <div class="modal-actions"><button class="btn" onclick="closeModal()">Close</button></div>
+    </div>
+  </div>`;
+}
+function importData(){document.getElementById('import-input').click();}
+function handleImportFile(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=evt=>{
+    try {
+      const d=JSON.parse(evt.target.result);
+      if(!d.goals)throw new Error('invalid');
+      goals=d.goals; gid=d.gid||1; sid=d.sid||1;
+      render();
+      alert('Imported successfully.');
+    } catch(err){ alert('Could not read that file — make sure it\'s a Goal Tracker export.'); }
+    e.target.value='';
+  };
+  reader.readAsText(file);
+}
+
+load();
+render();
+</script>
+</body>
+</html>
