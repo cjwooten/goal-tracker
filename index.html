@@ -89,8 +89,8 @@
   .goal-name-input { font-size: 14px; font-weight: 500; font-family: var(--font); color: var(--text1); border: 0.5px solid var(--border3); border-radius: 4px; padding: 1px 4px; background: var(--bg); outline: none; width: 100%; }
 
   .status-badge { font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 500; flex-shrink: 0; }
-  .s-active   { background: #dbeeff; color: #1d4ed8; }
-  .s-waiting  { background: #fef3c7; color: #92400e; }
+  .s-active   { background: #fef3c7; color: #92400e; }
+  .s-waiting  { background: #dbeeff; color: #1d4ed8; }
   .s-done     { background: #d1fae5; color: #065f46; }
   .s-blocked  { background: #f1f0ec; color: #5a5a56; }
   .s-archived { background: #f1f0ec; color: #9a9892; }
@@ -110,7 +110,7 @@
   .next-text  { font-size: 13px; font-weight: 500; color: var(--text1); line-height: 1.4; }
   .next-dur   { font-size: 11px; color: var(--text2); margin-top: 2px; }
 
-  .progress-bar { height: 3px; background: var(--bg2); margin: 0 16px 2px; border-radius: 2px; overflow: hidden; }
+  .progress-bar { height: 3px; background: var(--bg2); margin: 0 0 2px; border-radius: 0; overflow: hidden; }
   .progress-fill { height: 100%; border-radius: 2px; transition: width 0.4s; background: #1D9E75; }
 
   /* spine view */
@@ -118,15 +118,15 @@
   .spine-dots { display: flex; align-items: center; flex: 1; min-width: 0; }
   .spine-dot-sm { width: 12px; height: 12px; border-radius: 50%; border: 2px solid; flex-shrink: 0; }
   .spine-dot-sm.done    { background: #1D9E75; border-color: #1D9E75; }
-  .spine-dot-sm.active  { background: #185FA5; border-color: #185FA5; }
-  .spine-dot-sm.waiting { background: #BA7517; border-color: #BA7517; }
+  .spine-dot-sm.active  { background: #BA7517; border-color: #BA7517; }
+  .spine-dot-sm.waiting { background: #185FA5; border-color: #185FA5; }
   .spine-dot-sm.blocked { background: var(--bg2); border-color: var(--border2); }
   .spine-line-sm { flex: 1; height: 2px; min-width: 4px; }
   .spine-line-sm.done    { background: #1D9E75; opacity: 0.35; }
-  .spine-line-sm.active  { background: #185FA5; opacity: 0.3; }
-  .spine-line-sm.waiting { background: #BA7517; opacity: 0.3; }
+  .spine-line-sm.active  { background: #BA7517; opacity: 0.3; }
+  .spine-line-sm.waiting { background: #185FA5; opacity: 0.3; }
   .spine-line-sm.blocked { background: var(--border1); }
-  .spine-label { font-size: 11px; color: var(--text2); margin-left: 10px; white-space: nowrap; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
+  .spine-label { font-size: 11px; color: var(--text2); margin-left: 10px; white-space: nowrap; min-width: 0; overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
 
   /* expanded steps */
   .steps-wrap { padding: 14px 16px 4px; }
@@ -149,15 +149,15 @@
   .step-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid; flex-shrink: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.12s; z-index: 1; margin-top: 1px; }
   .step-dot:hover { transform: scale(1.18); }
   .step-dot.done    { background: #1D9E75; border-color: #1D9E75; }
-  .step-dot.active  { background: #185FA5; border-color: #185FA5; }
-  .step-dot.waiting { background: #BA7517; border-color: #BA7517; }
+  .step-dot.active  { background: #BA7517; border-color: #BA7517; }
+  .step-dot.waiting { background: #185FA5; border-color: #185FA5; }
   .step-dot.blocked { background: var(--bg2); border-color: var(--border2); }
   .step-dot svg { width: 9px; height: 9px; }
 
   .step-line { width: 2px; flex: 1; margin-top: 3px; border-radius: 1px; }
   .step-line.done    { background: #1D9E75; opacity: 0.35; }
-  .step-line.active  { background: #185FA5; opacity: 0.3; }
-  .step-line.waiting { background: #BA7517; opacity: 0.3; }
+  .step-line.active  { background: #BA7517; opacity: 0.3; }
+  .step-line.waiting { background: #185FA5; opacity: 0.3; }
   .step-line.blocked { background: var(--border1); opacity: 1; }
 
   .step-body { flex: 1; padding: 0 0 18px 10px; min-width: 0; }
@@ -175,8 +175,8 @@
   .step-dur-input { font-size: 11px; font-family: var(--font); color: var(--text2); border: 0.5px solid var(--border3); border-radius: 3px; padding: 1px 4px; background: var(--bg); outline: none; width: 90px; }
 
   .tag { font-size: 10px; padding: 1px 6px; border-radius: 4px; border: 0.5px solid; font-weight: 500; }
-  .tag-wait   { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
-  .tag-active { background: #dbeeff; color: #1d4ed8; border-color: #93c5fd; }
+  .tag-wait   { background: #dbeeff; color: #1d4ed8; border-color: #93c5fd; }
+  .tag-active { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
   .tag-done   { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
 
   .step-actions { display: flex; align-items: center; gap: 4px; margin-top: 5px; }
@@ -264,47 +264,61 @@
 <script>
 let gid=1,sid=1,dragging=null,dragGoalId=null;
 const STATUSES=['blocked','active','waiting','done'];
-const STORE_KEY='goal-tracker-v3.4-share';
+const STORE_KEY='goal-tracker-v3.4.2';
 
+// ── Default sample data — shown to first-time visitors only ──────────────────
 const DEFAULT_DATA={
-  gid:6,sid:25,
+  gid:10, sid:60,
   goals:[
-    {id:1,name:"Launch my portfolio site",expanded:true,archived:false,archivedAt:null,steps:[
-      {id:1, title:"Buy a domain name",               status:"done",    dur:"15 min",   wait:false},
-      {id:2, title:"Choose a framework or template",  status:"done",    dur:"1 hr",     wait:false},
-      {id:3, title:"Write bio and about section",     status:"done",    dur:"45 min",   wait:false},
-      {id:4, title:"Add 3 project case studies",      status:"active",  dur:"2–3 hrs",  wait:false},
-      {id:5, title:"Set up contact form",             status:"blocked", dur:"30 min",   wait:false},
-      {id:6, title:"Deploy and go live",              status:"blocked", dur:"1 hr",     wait:false}
-    ]},
-    {id:2,name:"Australian road trip",expanded:false,archived:false,archivedAt:null,steps:[
-      {id:7, title:"Map out the route — Sydney to Cairns", status:"done",    dur:"2 hrs",    wait:false},
-      {id:8, title:"Book accommodation for first week",    status:"done",    dur:"1 hr",     wait:false},
-      {id:9, title:"Get car serviced and road-ready",      status:"active",  dur:"1 day",    wait:false},
-      {id:10,title:"Waiting on annual leave approval",     status:"waiting", dur:"2 weeks",  wait:true },
-      {id:11,title:"Pack and hit the road",                status:"blocked", dur:"1 day",    wait:false}
-    ]},
-    {id:3,name:"Move to a new city",expanded:false,archived:false,archivedAt:null,steps:[
-      {id:12,title:"Research neighborhoods and cost of living", status:"done",    dur:"2 hrs",    wait:false},
-      {id:13,title:"Set a moving budget",                       status:"done",    dur:"30 min",   wait:false},
-      {id:14,title:"Current lease expires",                     status:"waiting", dur:"3 months", wait:true },
-      {id:15,title:"Book movers and get quotes",                status:"blocked", dur:"1 hr",     wait:false},
-      {id:16,title:"Transfer utilities and update address",     status:"blocked", dur:"1 hr",     wait:false}
-    ]},
-    {id:4,name:"Build a side project",expanded:false,archived:false,archivedAt:null,steps:[
-      {id:17,title:"Define the core problem to solve",  status:"blocked", dur:"1 hr",     wait:false},
-      {id:18,title:"Sketch a rough prototype",          status:"blocked", dur:"2 hrs",    wait:false},
-      {id:19,title:"Interview 5 potential users",       status:"blocked", dur:"1 week",   wait:false},
-      {id:20,title:"Build the MVP",                     status:"blocked", dur:"2–4 wks",  wait:false},
-      {id:21,title:"Launch and get first 10 users",     status:"blocked", dur:"1–2 days", wait:false}
-    ]},
-    {id:5,name:"Read 12 books last year",expanded:false,archived:true,archivedAt:1704067200000,steps:[
-      {id:22,title:"Build a reading list",          status:"done", dur:"20 min", wait:false},
-      {id:23,title:"Read for 20 min every morning", status:"done", dur:"1 year", wait:false},
-      {id:24,title:"Hit 12 books — done!",          status:"done", dur:"",       wait:false}
-    ]}
+    {
+      id:1, name:'Launch my portfolio site', expanded:true, archived:false, archivedAt:null,
+      steps:[
+        {id:1,  title:'Buy a domain name',                   status:'done',    dur:'30 min', wait:false},
+        {id:2,  title:'Choose a template or framework',      status:'done',    dur:'2 hrs',  wait:false},
+        {id:3,  title:'Write About and Projects sections',   status:'active',  dur:'3 hrs',  wait:false},
+        {id:4,  title:'Add case studies with screenshots',   status:'blocked', dur:'4 hrs',  wait:false},
+        {id:5,  title:'Deploy to Vercel or Netlify',         status:'blocked', dur:'1 hr',   wait:false},
+      ]
+    },
+    {
+      id:2, name:'Australian road trip', expanded:false, archived:false, archivedAt:null,
+      steps:[
+        {id:6,  title:'Decide on route and duration',        status:'done',    dur:'2 hrs',  wait:false},
+        {id:7,  title:'Book flights to Sydney',              status:'done',    dur:'1 hr',   wait:false},
+        {id:8,  title:'Research campsite bookings',          status:'active',  dur:'3 hrs',  wait:false},
+        {id:9,  title:'Rent a campervan',                    status:'waiting', dur:'30 min', wait:true},
+        {id:10, title:'Pack and prep gear',                  status:'blocked', dur:'4 hrs',  wait:false},
+      ]
+    },
+    {
+      id:3, name:'Move to a new city', expanded:false, archived:false, archivedAt:null,
+      steps:[
+        {id:11, title:'Shortlist neighbourhoods',            status:'done',    dur:'2 hrs',  wait:false},
+        {id:12, title:'Visit 3–5 apartments',                status:'waiting', dur:'1 day',  wait:true},
+        {id:13, title:'Give notice at current place',        status:'blocked', dur:'30 min', wait:false},
+        {id:14, title:'Book removalists',                    status:'blocked', dur:'1 hr',   wait:false},
+      ]
+    },
+    {
+      id:4, name:'Build a side project', expanded:false, archived:false, archivedAt:null,
+      steps:[
+        {id:15, title:'Pick an idea to pursue',              status:'blocked', dur:'',       wait:false},
+        {id:16, title:'Define MVP scope',                    status:'blocked', dur:'',       wait:false},
+        {id:17, title:'Set up repo and dev environment',     status:'blocked', dur:'2 hrs',  wait:false},
+        {id:18, title:'Ship v1',                             status:'blocked', dur:'',       wait:false},
+      ]
+    },
+    {
+      id:5, name:'Read 12 books this year', expanded:false, archived:true, archivedAt:1704067200000,
+      steps:[
+        {id:19, title:'January: Atomic Habits',              status:'done',    dur:'6 hrs',  wait:false},
+        {id:20, title:'February: The Mom Test',              status:'done',    dur:'4 hrs',  wait:false},
+        {id:21, title:'March: Thinking Fast and Slow',       status:'done',    dur:'8 hrs',  wait:false},
+      ]
+    },
   ]
 };
+// ────────────────────────────────────────────────────────────────────────────
 
 function save(){
   try { localStorage.setItem(STORE_KEY, JSON.stringify({goals,gid,sid})); } catch(e){}
@@ -339,6 +353,72 @@ function goalStatus(g){
 function nextStep(g){return g.steps.find(s=>s.status==='active'||s.status==='waiting');}
 function pct(g){return!g.steps.length?0:Math.round(g.steps.filter(s=>s.status==='done').length/g.steps.length*100);}
 
+// ── Duration utilities ───────────────────────────────────────────────────────
+function applyUnit(val,unit){
+  const u=unit.toLowerCase().trim();
+  if(!u||u.match(/^(m|min|mins|minute|minutes)$/))return val;
+  if(u.match(/^(h|hr|hrs|hour|hours)$/))return val*60;
+  if(u.match(/^(d|dy|day|days)$/))return val*60*24;
+  if(u.match(/^(w|wk|wks|week|weeks)$/))return val*60*24*7;
+  if(u.match(/^(mo|mon|month|months)$/))return val*60*24*30;
+  if(u.match(/^(y|yr|yrs|year|years)$/))return val*60*24*365;
+  return null;
+}
+function parseDurToMins(str){
+  if(!str||!str.trim())return null;
+  const s=str.trim().toLowerCase().replace(/–/g,'-').replace(/\s+/g,' ');
+  const rng=s.match(/^([\d.]+)\s*-\s*([\d.]+)\s*(.*)$/);
+  if(rng){return applyUnit(parseFloat(rng[2]),rng[3].trim());}
+  const m=s.match(/^([\d.]+)\s*(.*)$/);
+  if(m)return applyUnit(parseFloat(m[1]),m[2].trim());
+  return null;
+}
+function normUnitLabel(unit,val){
+  const u=unit.toLowerCase().trim();
+  if(!u||u.match(/^(m|min|mins|minute|minutes)$/))return'min';
+  if(u.match(/^(h|hr|hrs|hour|hours)$/))return val===1?'hr':'hrs';
+  if(u.match(/^(d|dy|day|days)$/))return val===1?'day':'days';
+  if(u.match(/^(w|wk|wks|week|weeks)$/))return val===1?'wk':'wks';
+  if(u.match(/^(mo|mon|month|months)$/))return'mo';
+  if(u.match(/^(y|yr|yrs|year|years)$/))return val===1?'yr':'yrs';
+  return unit.trim();
+}
+function normDur(str){
+  if(!str||!str.trim())return'';
+  const s=str.trim().toLowerCase().replace(/–/g,'-').replace(/\s+/g,' ');
+  const rng=s.match(/^([\d.]+)\s*-\s*([\d.]+)\s*(.*)$/);
+  if(rng){
+    const lo=parseFloat(rng[1]),hi=parseFloat(rng[2]),unit=rng[3].trim();
+    if(applyUnit(1,unit)!==null||!unit)return`${lo}–${hi} ${normUnitLabel(unit,hi)}`.trim();
+    return str.trim();
+  }
+  const m=s.match(/^([\d.]+)\s*(.*)$/);
+  if(m){
+    const val=parseFloat(m[1]),unit=m[2].trim();
+    if(applyUnit(val,unit)!==null)return`${m[1]} ${normUnitLabel(unit,val)}`.trim();
+  }
+  return str.trim();
+}
+function formatMins(mins){
+  if(mins<60)return`${Math.round(mins)} min`;
+  const h=mins/60;
+  if(h<24){const wh=Math.floor(h),wm=Math.round((h-wh)*60);return wm?`${wh} hr ${wm} min`:`${wh} ${wh===1?'hr':'hrs'}`;}
+  const d=h/24;
+  if(d<7){const wd=Math.floor(d),whr=Math.round((d-wd)*24);return whr?`${wd} ${wd===1?'day':'days'} ${whr} hr`:`${wd} ${wd===1?'day':'days'}`;}
+  const w=d/7;
+  if(w<4.35){const ww=Math.floor(w),wd2=Math.round((w-ww)*7);return wd2?`${ww} ${ww===1?'wk':'wks'} ${wd2} ${wd2===1?'day':'days'}`:`${ww} ${ww===1?'wk':'wks'}`;}
+  const mo=d/30;
+  if(mo<12){const wmo=Math.floor(mo),wd3=Math.round((mo-wmo)*30);return wd3?`${wmo} mo ${wd3} ${wd3===1?'day':'days'}`:`${wmo} mo`;}
+  const yr=Math.floor(d/365),rmo=Math.round((d-yr*365)/30);
+  return rmo?`${yr} ${yr===1?'yr':'yrs'} ${rmo} mo`:`${yr} ${yr===1?'yr':'yrs'}`;
+}
+function goalRemainingDur(g){
+  let total=0,hasAny=false;
+  for(const s of g.steps){if(s.status==='done')continue;const m=parseDurToMins(s.dur);if(m!==null){total+=m;hasAny=true;}}
+  return hasAny?formatMins(Math.round(total)):null;
+}
+// ────────────────────────────────────────────────────────────────────────────
+
 function dotSvg(st){
   if(st==='done')   return`<svg viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   if(st==='active') return`<svg viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="2.5" fill="white"/></svg>`;
@@ -347,7 +427,7 @@ function dotSvg(st){
 }
 
 function ring(p,st){
-  const col=st==='done'?'#1D9E75':st==='active'?'#185FA5':st==='waiting'?'#BA7517':'#9a9892';
+  const col=st==='done'?'#1D9E75':st==='active'?'#BA7517':st==='waiting'?'#185FA5':'#9a9892';
   const c=2*Math.PI*11,dash=(p/100)*c;
   return`<svg width="32" height="32" viewBox="0 0 32 32" style="display:block;flex-shrink:0">
     <circle cx="16" cy="16" r="11" fill="none" stroke="var(--bg2)" stroke-width="3"/>
@@ -359,7 +439,7 @@ function ring(p,st){
 }
 
 function badgeClass(st){return{done:'s-done',active:'s-active',waiting:'s-waiting',blocked:'s-blocked'}[st];}
-function badgeLabel(st){return{done:'done',active:'up next',waiting:'waiting',blocked:'not started'}[st];}
+function badgeLabel(st){return{done:'done',active:'to do',waiting:'waiting',blocked:'not started'}[st];}
 
 const ICON_ARCHIVE  =`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4.5" width="11" height="7" rx="1"/><polyline points="1,4.5 2,1.5 11,1.5 12,4.5"/><line x1="6.5" y1="6.5" x2="6.5" y2="9.5"/><polyline points="4.5,8 6.5,9.5 8.5,8"/></svg>`;
 const ICON_UNARCHIVE=`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4.5" width="11" height="7" rx="1"/><polyline points="1,4.5 2,1.5 11,1.5 12,4.5"/><line x1="6.5" y1="9.5" x2="6.5" y2="6.5"/><polyline points="4.5,8 6.5,6.5 8.5,8"/></svg>`;
@@ -381,7 +461,7 @@ function renderSpineOnly(g){
 }
 
 function renderStep(g,s,isFirst,isLast){
-  const tag=s.status==='active'?`<span class="tag tag-active">do this now</span>`
+  const tag=s.status==='active'?`<span class="tag tag-active">to do</span>`
            :s.status==='waiting'?`<span class="tag tag-wait">passive wait</span>`
            :s.status==='done'?`<span class="tag tag-done">done</span>`:'';
   return`<div class="step-row" id="sr-${g.id}-${s.id}" draggable="true"
@@ -414,6 +494,7 @@ function renderStep(g,s,isFirst,isLast){
 function renderGoal(g,idx,activeGoals){
   const gs=goalStatus(g),p=pct(g),ns=nextStep(g);
   const done=g.steps.filter(s=>s.status==='done').length;
+  const rem=goalRemainingDur(g);
   const isFirst=idx===0, isLast=idx===activeGoals.length-1;
   const moveBtns=`<div class="goal-move-btns" onclick="event.stopPropagation()">
     <button class="goal-icon-btn" onclick="moveGoal(${g.id},-1)" title="Move up" ${isFirst?'disabled':''}><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,7 5.5,3.5 9,7"/></svg></button>
@@ -423,10 +504,9 @@ function renderGoal(g,idx,activeGoals){
   const trashBtn=`<button class="goal-icon-btn goal-del-btn" onclick="event.stopPropagation();openDeleteGoal(${g.id})" title="Delete goal">${ICON_TRASH}</button>`;
   const menuBtn=`<button class="goal-menu-btn" onclick="event.stopPropagation();openGoalMenu(${g.id},this,false)" title="Options">${ICON_MENU}</button>`;
 
-  // expanded=true → full detail view; expanded=false → spine view (always show body)
   const bodyContent=g.expanded
     ?`${ns?`<div class="next-banner">
-        <div class="next-dot" style="background:${ns.status==='waiting'?'#BA7517':'#185FA5'}"></div>
+        <div class="next-dot" style="background:${ns.status==='waiting'?'#185FA5':'#BA7517'}"></div>
         <div>
           <div class="next-label">${ns.status==='waiting'?'Waiting on':'Next action'}</div>
           <div class="next-text">${ns.title}</div>
@@ -443,7 +523,7 @@ function renderGoal(g,idx,activeGoals){
       ${ring(p,gs)}
       <div class="goal-meta">
         <div class="goal-name"><span class="goal-name-view" onclick="event.stopPropagation();editGoalName(${g.id})" title="Click to rename">${g.name}</span></div>
-        <div class="goal-sub">${done} of ${g.steps.length} steps complete</div>
+        <div class="goal-sub">${done} of ${g.steps.length} steps complete${rem?` · ${rem} remaining`:''}</div>
       </div>
       ${moveBtns}
       ${archiveBtn}
@@ -459,6 +539,7 @@ function renderGoal(g,idx,activeGoals){
 function renderArchivedGoal(g){
   const p=pct(g);
   const done=g.steps.filter(s=>s.status==='done').length;
+  const rem=goalRemainingDur(g);
   const unarchiveBtn=`<button class="goal-icon-btn goal-archive-btn" onclick="doUnarchiveGoal(${g.id})" title="Restore goal">${ICON_UNARCHIVE}</button>`;
   const trashBtn=`<button class="goal-icon-btn goal-del-btn" onclick="openDeleteGoal(${g.id})" title="Delete goal">${ICON_TRASH}</button>`;
   const menuBtn=`<button class="goal-menu-btn" onclick="openGoalMenu(${g.id},this,true)" title="Options">${ICON_MENU}</button>`;
@@ -467,7 +548,7 @@ function renderArchivedGoal(g){
       ${ring(p,'blocked')}
       <div class="goal-meta">
         <div class="goal-name">${g.name}</div>
-        <div class="goal-sub">${done} of ${g.steps.length} steps complete</div>
+        <div class="goal-sub">${done} of ${g.steps.length} steps complete${rem?` · ${rem} remaining`:''}</div>
       </div>
       ${unarchiveBtn}
       ${trashBtn}
@@ -492,7 +573,24 @@ function render(){
   }
   document.getElementById('root').innerHTML=html;
   save();
+  fixSpineLabels();
 }
+
+function fixSpineLabels(){
+  requestAnimationFrame(()=>{
+    document.querySelectorAll('.spine-only').forEach(row=>{
+      const dots=row.querySelector('.spine-dots');
+      const label=row.querySelector('.spine-label');
+      if(!dots||!label)return;
+      dots.style.overflow='';
+      label.style.display='';
+      const crowded=dots.scrollWidth>dots.clientWidth;
+      label.style.display=crowded?'none':'';
+      dots.style.overflow=crowded?'hidden':'';
+    });
+  });
+}
+window.addEventListener('resize',fixSpineLabels);
 
 function toggleGoal(id){const g=goals.find(x=>x.id===id);if(g&&!g.archived)g.expanded=!g.expanded;render();}
 function cycleStatus(gId,sId){
@@ -590,9 +688,9 @@ function editTitle(gId,sId){
 function editDur(gId,sId){
   const g=goals.find(x=>x.id===gId),s=g.steps.find(x=>x.id===sId);
   const el=document.querySelector(`#sr-${gId}-${sId} .step-dur`);if(!el)return;
-  const inp=document.createElement('input');inp.className='step-dur-input';inp.value=s.dur||'';inp.placeholder='e.g. 10 min';
+  const inp=document.createElement('input');inp.className='step-dur-input';inp.value=s.dur||'';inp.placeholder='e.g. 30 min, 2 hrs, 1–2 days';
   el.replaceWith(inp);inp.focus();inp.select();
-  inp.addEventListener('blur',()=>{s.dur=inp.value.trim();render();});
+  inp.addEventListener('blur',()=>{const raw=inp.value.trim();s.dur=(raw&&parseDurToMins(raw)!==null)?normDur(raw):'';render();});
   inp.addEventListener('keydown',e=>{if(e.key==='Enter')inp.blur();if(e.key==='Escape')inp.blur();});
 }
 function handleAdd(e,gId){
@@ -602,7 +700,6 @@ function handleAdd(e,gId){
   const g=goals.find(x=>x.id===gId);
   g.steps.push({id:sid++,title,status:'blocked',dur:'',wait:false});
   inp.value='';render();
-  // re-focus after Enter (keyboard stays open); skip on blur (keyboard already dismissing)
   if(e.type==='keydown')setTimeout(()=>{const el=document.getElementById(`ai-${gId}`);if(el)el.focus();},30);
 }
 
@@ -729,7 +826,7 @@ function openDataModal(){
         </div>
         <div style="border:0.5px solid var(--border2);border-radius:var(--radius-md);padding:14px">
           <div style="font-size:13px;font-weight:500;color:var(--text1);margin-bottom:4px">Import</div>
-          <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px">Loads goals from a backup file. <strong style="color:var(--text1)">This replaces everything currently in your tracker.</strong> Only Goal Tracker export files (.json) are supported — other files won't work.</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px">Loads goals from a backup file. <strong style="color:#dc2626">This replaces everything currently in your tracker.</strong> Only Goal Tracker export files (.json) are supported — other files won't work.</div>
           <button class="btn" onclick="closeModal();importData()" style="font-size:12px">Choose backup file…</button>
         </div>
       </div>
