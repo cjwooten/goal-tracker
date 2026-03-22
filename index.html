@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Spine Goals · v3.7.4 · 2026-03-22 -->
+<!-- Spine Goals · v3.7.5 · 2026-03-22 -->
 <html lang="en">
 <head>
 <!-- Google tag (gtag.js) -->
@@ -357,18 +357,23 @@
 
   /* ≤500px mobile breakpoint */
   @media (max-width: 500px) {
-    .add-input, .step-title-input, .step-dur-input, .goal-name-input,
+    .step-title-input, .step-dur-input, .goal-name-input,
     .field input, .field select { font-size: 16px !important; }
     .goal-move-btns, .goal-icon-btn { display: none !important; }
     .goal-menu-btn { display: flex; }
     .goal-name-view { pointer-events: none; cursor: default; }
     .goal-name-view:hover { background: transparent; }
     .drag-handle { display: none; }
-    .step-move-btns { display: flex; gap: 2px; align-self: center; }
-    .step-move-btn { padding: 13px 11px; }
+    .step-move-btns { display: flex; gap: 2px; align-self: flex-start; margin-top: -2px; }
+    .step-move-btn { padding: 4px 10px; position: relative; }
+    .step-move-btn:first-child::after { content: ''; position: absolute; inset: -18px -8px -4px -8px; }
+    .step-move-btn:last-child::after { content: ''; position: absolute; inset: -4px -8px -18px -8px; }
     .step-dot { width: 26px; height: 26px; }
     .step-spine { width: 26px; }
     .step-action-btn { opacity: 1 !important; padding: 6px 8px; }
+    .goal-header > svg { width: 40px; height: 40px; }
+    .add-input { font-size: 13px; padding: 4px 10px; }
+    .add-input:focus { font-size: 16px !important; padding: 8px 12px; }
   }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -574,7 +579,7 @@ function openDemoLimitModal(type){
 
 async function save(silent=false){
   if(GUEST_MODE){
-    _demoUnsaved=true;
+    if(!silent) _demoUnsaved=true;
     localStorage.setItem(STORE_KEY, JSON.stringify({goals,gid,sid}));
     setSaveStatus('saved');
     return;
@@ -1548,7 +1553,7 @@ function setTheme(mode,btn){
     }
   }
   await load();
-  render();
+  render(true); // silent — don't mark as unsaved on initial load
   if(GUEST_MODE) setSaveStatus('saved');
   if(showWelcome) openWelcome();
 
