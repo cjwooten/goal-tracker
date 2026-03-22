@@ -403,11 +403,11 @@
     const email = document.getElementById('f-email').value.trim();
     const password = document.getElementById('f-password').value;
 
-    let error;
+    let error, data;
     if (mode === 'signup') {
-      ({ error } = await _supabase.auth.signUp({ email, password }));
+      ({ data, error } = await _supabase.auth.signUp({ email, password }));
     } else {
-      ({ error } = await _supabase.auth.signInWithPassword({ email, password }));
+      ({ data, error } = await _supabase.auth.signInWithPassword({ email, password }));
     }
 
     btn.disabled = false;
@@ -415,9 +415,28 @@
 
     if (error) {
       showError('password', error.message);
+    } else if (mode === 'signup' && !data.session) {
+      // Email confirmation required — show verify prompt
+      showVerifyEmail(email);
     } else {
       window.location.href = 'index.html';
     }
+  }
+
+  function showVerifyEmail(email) {
+    document.querySelector('.card').innerHTML = `
+      <div style="text-align:center;padding:1rem 0">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" style="margin-bottom:1.25rem;opacity:0.5" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="4" width="20" height="16" rx="2" stroke="var(--text1)" stroke-width="1.5"/>
+          <path d="M2 7l10 7 10-7" stroke="var(--text1)" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <h2 style="font-size:16px;font-weight:500;margin-bottom:0.5rem;color:var(--text1)">Check your email</h2>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:0.25rem">We sent a confirmation link to</p>
+        <p style="font-size:13px;font-weight:500;color:var(--text1);margin-bottom:1.25rem">${email}</p>
+        <p style="font-size:12px;color:var(--text3);line-height:1.6;margin-bottom:1.5rem">Click the link in the email to activate your account, then sign in here.</p>
+        <a href="spine-goals_login.html" style="font-size:13px;color:var(--text2);text-decoration:none;border-bottom:0.5px solid var(--border2)">Back to sign in</a>
+      </div>
+    `;
   }
 
   function validate() {
@@ -432,8 +451,10 @@
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       showError('email', 'Please enter a valid email address.'); ok = false;
     }
-    if (!password || password.length < 6) {
-      showError('password', mode === 'signup' ? 'Password must be at least 6 characters.' : 'Please enter your password.'); ok = false;
+    if (!password) {
+      showError('password', 'Please enter your password.'); ok = false;
+    } else if (mode === 'signup' && (password.length < 8 || !/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password))) {
+      showError('password', 'Password must be at least 8 characters and include an uppercase letter, lowercase letter, and number.'); ok = false;
     }
     return ok;
   }
