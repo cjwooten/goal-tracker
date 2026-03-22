@@ -359,7 +359,7 @@
   <button class="btn-primary" id="submit-btn" onclick="submit()">Sign In</button>
 
   <!-- Guest bypass -->
-  <a class="guest-link" href="index.html?guest=true">Continue without an account →</a>
+  <a class="guest-link" href="/?guest=true">Continue without an account →</a>
 
   <!-- Helper -->
   <p class="helper" id="helper-text" style="margin-top:0.6rem">
@@ -372,8 +372,8 @@
 <p style="text-align:center;font-size:10px;color:var(--text3);margin-top:1rem;opacity:0.4" id="version-tag"></p>
 </div>
 
+<script src="version.js"></script>
 <script>
-  const APP_VERSION='v3.7.1';
   document.getElementById('version-tag').textContent=APP_VERSION;
 
   // ── Supabase client ─────────────────────────────────────────────────────────
@@ -384,7 +384,7 @@
   // Redirect to app if already signed in
   (async()=>{
     const {data:{session}}=await _supabase.auth.getSession();
-    if(session) window.location.href='index.html';
+    if(session) window.location.href='/';
   })();
 
   let mode = 'signin'; // 'signin' | 'signup'
@@ -438,7 +438,7 @@
       // Email confirmation required — show verify prompt
       showVerifyEmail(email);
     } else {
-      window.location.href = 'index.html';
+      window.location.href = '/';
     }
   }
 
@@ -507,7 +507,7 @@
   }
 
   function guestAccess() {
-    window.location.href = 'index.html?guest=true';
+    window.location.href = '/?guest=true';
   }
 
   /* ── Modals ── */

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Spine Goals · v3.7.1 · 2026-03-21 -->
+<!-- Spine Goals · v3.7.2 · 2026-03-21 -->
 <html lang="en">
 <head>
 <!-- Google tag (gtag.js) -->
@@ -364,7 +364,10 @@
     .goal-name-view { pointer-events: none; cursor: default; }
     .goal-name-view:hover { background: transparent; }
     .drag-handle { display: none; }
-    .step-move-btns { display: flex; }
+    .step-move-btns { display: flex; gap: 2px; }
+    .step-move-btn { padding: 13px 11px; }
+    .step-dot { width: 26px; height: 26px; }
+    .step-spine { width: 26px; }
     .step-action-btn { opacity: 1 !important; padding: 6px 8px; }
   }
 </style>
@@ -392,9 +395,9 @@
 </div>
 <div id="modal-container"></div>
 
+<script src="version.js"></script>
 <script>
 let gid=1,sid=1,dragging=null,dragGoalId=null,showWelcome=false;
-const APP_VERSION='v3.7.1';
 const STATUSES=['blocked','active','waiting','done'];
 const STORE_KEY='goal-tracker-v3.7';
 
@@ -408,61 +411,40 @@ let currentUser=null;
 
 // ── Default sample data — shown to first-time visitors only ──────────────────
 const DEFAULT_DATA={
-  gid:10, sid:30,
+  gid:4, sid:17,
   goals:[
     {
-      // Expanded by default — showcases waiting state clearly
-      id:1, name:'Launch my portfolio site', expanded:true, archived:false, archivedAt:null,
+      // Open goal — expanded, showcases all four step statuses
+      id:1, name:'Run my first 5K', expanded:true, archived:false, archivedAt:null,
       steps:[
-        {id:1,  title:'Buy a domain name',                   status:'done',    dur:'30 min', wait:false},
-        {id:2,  title:'Set up hosting',                      status:'done',    dur:'1 hr',   wait:false},
-        {id:3,  title:'Write bio and project descriptions',  status:'done',    dur:'3 hrs',  wait:false},
-        {id:4,  title:'Send draft to a friend for review',   status:'waiting', dur:'',       wait:true},
-        {id:5,  title:'Apply feedback and finalize design',  status:'blocked', dur:'2 hrs',  wait:false},
-        {id:6,  title:'Deploy and go live',                  status:'blocked', dur:'30 min', wait:false},
+        {id:1,  title:'Sign up for a local race',            status:'done',    dur:'10 min', wait:false},
+        {id:2,  title:'Get a pair of running shoes',         status:'done',    dur:'1 hr',   wait:false},
+        {id:3,  title:'Start a training plan',               status:'active',  dur:'8 wks',  wait:false},
+        {id:4,  title:'Find someone to run with',            status:'waiting', dur:'',       wait:true},
+        {id:5,  title:'Race day',                            status:'blocked', dur:'',       wait:false},
       ]
     },
     {
-      // Collapsed — also has waiting (campervan enquiry sent)
-      id:2, name:'Australian road trip', expanded:false, archived:false, archivedAt:null,
+      // Completed goal — all steps done, collapsed
+      id:2, name:'Redecorate my bedroom', expanded:false, archived:false, archivedAt:null,
       steps:[
-        {id:7,  title:'Plan route and timeline',             status:'done',    dur:'2 hrs',  wait:false},
-        {id:8,  title:'Book flights to Sydney',              status:'done',    dur:'1 hr',   wait:false},
-        {id:9,  title:'Book campsite spots along route',     status:'active',  dur:'3 hrs',  wait:false},
-        {id:10, title:'Confirm campervan rental',            status:'waiting', dur:'30 min', wait:true},
-        {id:11, title:'Sort travel insurance',               status:'blocked', dur:'1 hr',   wait:false},
-        {id:12, title:'Pack and prep gear',                  status:'blocked', dur:'4 hrs',  wait:false},
+        {id:6,  title:'Pick a colour palette',               status:'done',    dur:'1 hr',   wait:false},
+        {id:7,  title:'Clear out and donate old things',     status:'done',    dur:'3 hrs',  wait:false},
+        {id:8,  title:'Paint the walls',                     status:'done',    dur:'1 day',  wait:false},
+        {id:9,  title:'Buy new furniture',                   status:'done',    dur:'2 hrs',  wait:false},
+        {id:10, title:'Style and set up the room',           status:'done',    dur:'2 hrs',  wait:false},
       ]
     },
     {
-      // Collapsed — active only, no waiting
-      id:3, name:'Move to a new city', expanded:false, archived:false, archivedAt:null,
+      // Archived — completed trip, kept as a record
+      id:3, name:'Australian road trip', expanded:false, archived:true, archivedAt:1730419200000,
       steps:[
-        {id:13, title:'Research neighbourhoods',             status:'done',    dur:'2 hrs',  wait:false},
-        {id:14, title:'Schedule apartment viewings',         status:'done',    dur:'30 min', wait:false},
-        {id:15, title:'View shortlisted apartments',         status:'active',  dur:'1 day',  wait:false},
-        {id:16, title:'Sign lease',                          status:'blocked', dur:'2 hrs',  wait:false},
-        {id:17, title:'Give notice at current place',        status:'blocked', dur:'30 min', wait:false},
-        {id:18, title:'Hire removalists',                    status:'blocked', dur:'1 hr',   wait:false},
-      ]
-    },
-    {
-      // Collapsed — nothing started yet
-      id:4, name:'Build a side project', expanded:false, archived:false, archivedAt:null,
-      steps:[
-        {id:19, title:'Pick an idea to pursue',              status:'blocked', dur:'',       wait:false},
-        {id:20, title:'Define MVP scope',                    status:'blocked', dur:'',       wait:false},
-        {id:21, title:'Set up repo and dev environment',     status:'blocked', dur:'2 hrs',  wait:false},
-        {id:22, title:'Build and ship v1',                   status:'blocked', dur:'',       wait:false},
-      ]
-    },
-    {
-      // Archived example
-      id:5, name:'Read 12 books this year', expanded:false, archived:true, archivedAt:1704067200000,
-      steps:[
-        {id:23, title:'January: Atomic Habits',              status:'done',    dur:'6 hrs',  wait:false},
-        {id:24, title:'February: The Mom Test',              status:'done',    dur:'4 hrs',  wait:false},
-        {id:25, title:'March: Thinking Fast and Slow',       status:'done',    dur:'8 hrs',  wait:false},
+        {id:11, title:'Plan route and timeline',             status:'done',    dur:'2 hrs',  wait:false},
+        {id:12, title:'Book flights to Sydney',              status:'done',    dur:'1 hr',   wait:false},
+        {id:13, title:'Hire a campervan',                    status:'done',    dur:'30 min', wait:false},
+        {id:14, title:'Book campsite spots along the route', status:'done',    dur:'3 hrs',  wait:false},
+        {id:15, title:'Sort travel insurance',               status:'done',    dur:'1 hr',   wait:false},
+        {id:16, title:'Pack and go',                         status:'done',    dur:'4 hrs',  wait:false},
       ]
     },
   ]
@@ -1356,7 +1338,7 @@ function openMenu(){
           <div class="menu-section-label">What's new</div>
           <div style="padding:4px 10px 6px">
             <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:3px">${APP_VERSION} · Mar 2026</div>
-            <p style="font-size:11.5px;line-height:1.6;color:var(--text3)">Save status indicator, spine line logic, "waiting" step tag, and UI polish.</p>
+            <p style="font-size:11.5px;line-height:1.6;color:var(--text3)">Google Analytics, mobile touch target improvements, clean URL routing, and refreshed sample goals.</p>
           </div>
         </div>
 
