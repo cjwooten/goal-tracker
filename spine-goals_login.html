@@ -433,7 +433,11 @@
     btn.textContent = mode === 'signup' ? 'Create account' : 'Sign in';
 
     if (error) {
-      showError('password', error.message);
+      if (error.message && error.message.toLowerCase().includes('email not confirmed')) {
+        showVerifyEmail(email);
+      } else {
+        showError('password', error.message);
+      }
     } else if (mode === 'signup' && !data.session) {
       // Email confirmation required — show verify prompt
       showVerifyEmail(email);
