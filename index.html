@@ -411,7 +411,7 @@ let currentUser=null;
 
 // ── Default sample data — shown to first-time visitors only ──────────────────
 const DEFAULT_DATA={
-  gid:4, sid:17,
+  gid:4, sid:18,
   goals:[
     {
       // Open goal — expanded, showcases all four step statuses
@@ -425,26 +425,27 @@ const DEFAULT_DATA={
       ]
     },
     {
-      // Completed goal — all steps done, collapsed
+      // In-progress goal — collapsed, mixed statuses to showcase the spine
       id:2, name:'Redecorate my bedroom', expanded:false, archived:false, archivedAt:null,
       steps:[
         {id:6,  title:'Pick a colour palette',               status:'done',    dur:'1 hr',   wait:false},
         {id:7,  title:'Clear out and donate old things',     status:'done',    dur:'3 hrs',  wait:false},
-        {id:8,  title:'Paint the walls',                     status:'done',    dur:'1 day',  wait:false},
-        {id:9,  title:'Buy new furniture',                   status:'done',    dur:'2 hrs',  wait:false},
-        {id:10, title:'Style and set up the room',           status:'done',    dur:'2 hrs',  wait:false},
+        {id:8,  title:'Paint the walls',                     status:'active',  dur:'1 day',  wait:false},
+        {id:9,  title:'Wait for furniture delivery',         status:'waiting', dur:'',       wait:true},
+        {id:10, title:'Assemble and arrange furniture',      status:'blocked', dur:'2 hrs',  wait:false},
+        {id:11, title:'Style and finishing touches',         status:'blocked', dur:'2 hrs',  wait:false},
       ]
     },
     {
       // Archived — completed trip, kept as a record
       id:3, name:'Australian road trip', expanded:false, archived:true, archivedAt:1730419200000,
       steps:[
-        {id:11, title:'Plan route and timeline',             status:'done',    dur:'2 hrs',  wait:false},
-        {id:12, title:'Book flights to Sydney',              status:'done',    dur:'1 hr',   wait:false},
-        {id:13, title:'Hire a campervan',                    status:'done',    dur:'30 min', wait:false},
-        {id:14, title:'Book campsite spots along the route', status:'done',    dur:'3 hrs',  wait:false},
-        {id:15, title:'Sort travel insurance',               status:'done',    dur:'1 hr',   wait:false},
-        {id:16, title:'Pack and go',                         status:'done',    dur:'4 hrs',  wait:false},
+        {id:12, title:'Plan route and timeline',             status:'done',    dur:'2 hrs',  wait:false},
+        {id:13, title:'Book flights to Sydney',              status:'done',    dur:'1 hr',   wait:false},
+        {id:14, title:'Hire a campervan',                    status:'done',    dur:'30 min', wait:false},
+        {id:15, title:'Book campsite spots along the route', status:'done',    dur:'3 hrs',  wait:false},
+        {id:16, title:'Sort travel insurance',               status:'done',    dur:'1 hr',   wait:false},
+        {id:17, title:'Pack and go',                         status:'done',    dur:'4 hrs',  wait:false},
       ]
     },
   ]
@@ -914,12 +915,14 @@ function openDuplicateGoal(id){
   const g=goals.find(x=>x.id===id);if(!g)return;
   document.getElementById('modal-container').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeModal()">
     <div class="modal">
-      <h3>Duplicate goal</h3>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:0.75rem">
+        <h3 style="margin:0">Duplicate goal</h3>
+        <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;color:var(--text3);padding:2px 4px;font-size:16px;line-height:1;border-radius:4px" title="Cancel">✕</button>
+      </div>
       <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;line-height:1.6">
         A copy of <strong style="color:var(--text1)">${g.name}</strong> will be added below. Do you want to include the steps?
       </p>
       <div class="modal-actions">
-        <button class="btn" onclick="closeModal()">Cancel</button>
         <button class="btn" onclick="doDuplicateGoal(${id},false)">Without steps</button>
         <button class="btn btn-primary" onclick="doDuplicateGoal(${id},true)">With steps</button>
       </div>
@@ -1222,7 +1225,7 @@ function openWelcome(){
           <p style="font-size:13px;line-height:1.65;color:var(--text2);margin:0">You're in demo mode — your changes are only saved to this browser session and won't follow you across devices or visits. Create a free account to save your goals properly and access them anywhere.</p>
         </div>
         <button class="btn btn-primary" onclick="window.location.href='spine-goals_login.html?mode=signup'" style="width:100%;padding:10px;font-size:13px;font-weight:500;margin-bottom:8px">Create an account</button>
-        <button class="btn" onclick="closeModal()" style="width:100%;padding:10px;font-size:13px;font-weight:500;margin-bottom:12px">Keep exploring</button>
+        <button class="btn" onclick="closeModal()" style="width:100%;padding:10px;font-size:13px;font-weight:500;margin-bottom:12px">Start exploring</button>
         <p style="font-size:11px;color:var(--text3);line-height:1.5">Questions or feedback? <a href="mailto:hello@spinegoals.com" style="color:var(--text3);text-decoration:underline;text-underline-offset:2px">hello@spinegoals.com</a></p>
       </div>
     </div>`;
@@ -1338,7 +1341,7 @@ function openMenu(){
           <div class="menu-section-label">What's new</div>
           <div style="padding:4px 10px 6px">
             <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:3px">${APP_VERSION} · Mar 2026</div>
-            <p style="font-size:11.5px;line-height:1.6;color:var(--text3)">Google Analytics, mobile touch target improvements, clean URL routing, and refreshed sample goals.</p>
+            <p style="font-size:11.5px;line-height:1.6;color:var(--text3)">Demo data resets on exit, duplicate goal UX fix, "Start exploring" copy, and version token.</p>
           </div>
         </div>
 
@@ -1459,6 +1462,8 @@ function setTheme(mode,btn){
   const urlGuest=new URLSearchParams(window.location.search).get('guest')==='true';
   if(urlGuest){
     GUEST_MODE=true;
+    // Clear demo data when the user leaves — next visit always starts fresh
+    window.addEventListener('beforeunload',()=>localStorage.removeItem(STORE_KEY));
   } else {
     const {data:{session}}=await _supabase.auth.getSession();
     if(session){
