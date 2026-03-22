@@ -300,6 +300,7 @@
   }
   .btn-modal:hover { background: var(--bg3); }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div class="card">
@@ -356,6 +357,17 @@
 </div>
 
 <script>
+  // ── Supabase client ─────────────────────────────────────────────────────────
+  const SUPABASE_URL='https://gygdmdaohsiiphqqufgn.supabase.co';
+  const SUPABASE_ANON_KEY='sb_publishable_06vce6cx2R4-rL-9PdZ9hg_GyxAbNYa';
+  const _supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+
+  // Redirect to app if already signed in
+  (async()=>{
+    const {data:{session}}=await _supabase.auth.getSession();
+    if(session) window.location.href='index.html';
+  })();
+
   let mode = 'signin'; // 'signin' | 'signup'
 
   // Pre-select tab from URL param (e.g. ?mode=signup)
@@ -380,7 +392,7 @@
     clearAllErrors();
   }
 
-  function submit() {
+  async function submit() {
     const btn = document.getElementById('submit-btn');
     if (!validate()) return;
 
@@ -388,12 +400,24 @@
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span>';
 
-    // Simulate async — replace with real auth call
-    setTimeout(() => {
-      btn.disabled = false;
-      btn.textContent = mode === 'signup' ? 'Create account' : 'Sign in';
-      // On success: window.location.href = 'index.html';
-    }, 1400);
+    const email = document.getElementById('f-email').value.trim();
+    const password = document.getElementById('f-password').value;
+
+    let error;
+    if (mode === 'signup') {
+      ({ error } = await _supabase.auth.signUp({ email, password }));
+    } else {
+      ({ error } = await _supabase.auth.signInWithPassword({ email, password }));
+    }
+
+    btn.disabled = false;
+    btn.textContent = mode === 'signup' ? 'Create account' : 'Sign in';
+
+    if (error) {
+      showError('password', error.message);
+    } else {
+      window.location.href = 'index.html';
+    }
   }
 
   function validate() {

@@ -188,6 +188,7 @@
     display: inline-block;
   }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div class="card">
@@ -243,11 +244,18 @@
 </div>
 
 <script>
+  // ── Supabase client ─────────────────────────────────────────────────────────
+  const SUPABASE_URL='https://gygdmdaohsiiphqqufgn.supabase.co';
+  const SUPABASE_ANON_KEY='sb_publishable_06vce6cx2R4-rL-9PdZ9hg_GyxAbNYa';
+  const _supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+
   // Pre-fill email if passed from login screen
   const _params = new URLSearchParams(window.location.search);
   if (_params.get('email')) document.getElementById('f-email').value = _params.get('email');
 
-  function submit() {
+  let _lastEmail = '';
+
+  async function submit() {
     const email = document.getElementById('f-email').value.trim();
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       showError('Please enter a valid email address.');
@@ -258,10 +266,19 @@
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span>';
 
-    // Simulate async — replace with: supabase.auth.resetPasswordForEmail(email)
-    setTimeout(() => {
+    const { error } = await _supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: 'https://spinegoals.com'
+    });
+
+    btn.disabled = false;
+    btn.textContent = 'Send reset link';
+
+    if (error) {
+      showError(error.message);
+    } else {
+      _lastEmail = email;
       showSuccess(email);
-    }, 1200);
+    }
   }
 
   function showSuccess(email) {
@@ -272,11 +289,14 @@
     s.style.display = 'flex';
   }
 
-  function resend() {
+  async function resend() {
     const btn = document.getElementById('resend-btn');
-    btn.textContent = 'Sent!';
+    btn.textContent = 'Sending...';
     btn.disabled = true;
-    // Re-trigger: supabase.auth.resetPasswordForEmail(...)
+    await _supabase.auth.resetPasswordForEmail(_lastEmail, {
+      redirectTo: 'https://spinegoals.com'
+    });
+    btn.textContent = 'Sent!';
     setTimeout(() => { btn.textContent = 'Resend email'; btn.disabled = false; }, 3000);
   }
 

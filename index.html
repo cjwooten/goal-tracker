@@ -275,7 +275,7 @@
     width: 6px; height: 6px; border-radius: 50%;
     background: var(--text3); flex-shrink: 0; transition: background 0.2s;
   }
-  .save-status.saving .save-dot { background: var(--text3); }
+  .save-status.saving .save-dot { background: #F5A623; }
   .save-status.saved  .save-dot { background: #1D9E75; }
   .save-status.error  .save-dot { background: #dc2626; }
   .save-error-link {
@@ -360,6 +360,7 @@
     .step-action-btn { opacity: 1 !important; padding: 6px 8px; }
   }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div class="container">
@@ -387,7 +388,14 @@
 let gid=1,sid=1,dragging=null,dragGoalId=null,showWelcome=false;
 const STATUSES=['blocked','active','waiting','done'];
 const STORE_KEY='goal-tracker-v3.7';
-const GUEST_MODE=new URLSearchParams(window.location.search).get('guest')==='true';
+
+// ── Supabase client ───────────────────────────────────────────────────────────
+const SUPABASE_URL='https://gygdmdaohsiiphqqufgn.supabase.co';
+const SUPABASE_ANON_KEY='sb_publishable_06vce6cx2R4-rL-9PdZ9hg_GyxAbNYa';
+const _supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+
+let GUEST_MODE=false;
+let currentUser=null;
 
 // ── Default sample data — shown to first-time visitors only ──────────────────
 const DEFAULT_DATA={
@@ -549,26 +557,47 @@ function openGuestModal(){
   </div>`;
 }
 async function save(silent=false){
+  if(GUEST_MODE){
+    localStorage.setItem(STORE_KEY, JSON.stringify({goals,gid,sid}));
+    return;
+  }
   if(!silent) setSaveStatus('saving');
   try {
-    // ── Local fallback (active until Supabase is wired up) ──────────────────
-    localStorage.setItem(STORE_KEY, JSON.stringify({goals,gid,sid}));
-
-    // ── Supabase cloud save (replace above with this when ready) ────────────
-    // const { error } = await supabase.from('goals').upsert({ user_id, goals, gid, sid });
-    // if (error) throw error;
-    // ────────────────────────────────────────────────────────────────────────
-
+    const {error}=await _supabase.from('goals').upsert(
+      {user_id:currentUser.id, data:{goals,gid,sid}, updated_at:new Date().toISOString()},
+      {onConflict:'user_id'}
+    );
+    if(error) throw error;
+    localStorage.setItem(STORE_KEY, JSON.stringify({goals,gid,sid})); // local cache
     if(!silent) setSaveStatus('saved');
   } catch(e){ if(!silent) setSaveStatus('error'); }
 }
-function load(){
+async function load(){
   try {
+    if(GUEST_MODE){
+      const raw=localStorage.getItem(STORE_KEY);
+      if(!raw){goals=DEFAULT_DATA.goals;gid=DEFAULT_DATA.gid;sid=DEFAULT_DATA.sid;showWelcome=true;return;}
+      const d=JSON.parse(raw);
+      goals=d.goals||[]; gid=d.gid||1; sid=d.sid||1;
+      return;
+    }
+    // Signed-in: load from Supabase
+    const {data,error}=await _supabase.from('goals').select('data').eq('user_id',currentUser.id).maybeSingle();
+    if(error||!data){
+      // New user — load sample data and show welcome
+      goals=DEFAULT_DATA.goals;gid=DEFAULT_DATA.gid;sid=DEFAULT_DATA.sid;showWelcome=true;
+      return;
+    }
+    const d=data.data;
+    goals=d.goals||[]; gid=d.gid||1; sid=d.sid||1;
+    localStorage.setItem(STORE_KEY, JSON.stringify({goals,gid,sid})); // update local cache
+  } catch(e){
+    // Fall back to localStorage if Supabase unreachable
     const raw=localStorage.getItem(STORE_KEY);
     if(!raw){goals=DEFAULT_DATA.goals;gid=DEFAULT_DATA.gid;sid=DEFAULT_DATA.sid;showWelcome=true;return;}
     const d=JSON.parse(raw);
     goals=d.goals||[]; gid=d.gid||1; sid=d.sid||1;
-  } catch(e){}
+  }
 }
 
 let goals=[];
@@ -1230,6 +1259,12 @@ function openWelcome(){
   }
 }
 
+// ── Auth ──────────────────────────────────────────────────────────────────────
+async function signOut(){
+  await _supabase.auth.signOut();
+  window.location.href='spine-goals_login.html';
+}
+
 // ── Hamburger menu panel ──────────────────────────────────────────────────────
 function openMenu(){
   const logoSvg=getLogoSvg('26px','0');
@@ -1271,15 +1306,39 @@ function openMenu(){
         <!-- Account -->
         <div class="menu-section">
           <div class="menu-section-label">Account</div>
-          <div class="menu-item muted">
+          ${GUEST_MODE ? `
+          <div class="menu-item" onclick="window.location.href='spine-goals_login.html?mode=signup'">
             <span class="menu-item-icon">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="7" cy="4.5" r="2.5"/><path d="M1.5 13c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/>
               </svg>
             </span>
-            Sign in to manage account
-            <span class="menu-item-badge">Coming soon</span>
+            Create an account
           </div>
+          <div class="menu-item" onclick="window.location.href='spine-goals_login.html'">
+            <span class="menu-item-icon">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 7h7M9 4.5l2.5 2.5L9 9.5"/><path d="M7 2H2.5A1.5 1.5 0 001 3.5v7A1.5 1.5 0 002.5 12H7"/>
+              </svg>
+            </span>
+            Sign in
+          </div>` : `
+          <div class="menu-item muted" style="cursor:default">
+            <span class="menu-item-icon">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="7" cy="4.5" r="2.5"/><path d="M1.5 13c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/>
+              </svg>
+            </span>
+            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${currentUser?.email||'Account'}</span>
+          </div>
+          <div class="menu-item" onclick="signOut()">
+            <span class="menu-item-icon">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 7h7M9 4.5l2.5 2.5L9 9.5"/><path d="M7 2H2.5A1.5 1.5 0 001 3.5v7A1.5 1.5 0 002.5 12H7"/>
+              </svg>
+            </span>
+            Sign out
+          </div>`}
         </div>
 
         <!-- What's new -->
@@ -1403,10 +1462,38 @@ function setTheme(mode,btn){
 // Restore theme preference before first paint
 (function(){ const t=localStorage.getItem('spine-theme'); if(t&&t!=='auto') document.documentElement.setAttribute('data-theme',t); })();
 
-load();
-render();
-if(GUEST_MODE) setSaveStatus('saved'); // triggers "Demo mode" label in guest mode
-if(showWelcome)openWelcome();
+// ── Session check + app init ──────────────────────────────────────────────────
+(async()=>{
+  const urlGuest=new URLSearchParams(window.location.search).get('guest')==='true';
+  if(urlGuest){
+    GUEST_MODE=true;
+  } else {
+    const {data:{session}}=await _supabase.auth.getSession();
+    if(session){
+      GUEST_MODE=false;
+      currentUser=session.user;
+    } else {
+      // No session and not guest — send to login
+      window.location.href='spine-goals_login.html';
+      return;
+    }
+  }
+  await load();
+  render();
+  if(GUEST_MODE) setSaveStatus('saved');
+  if(showWelcome) openWelcome();
+
+  // ── Auth state listener — handle token refresh + session expiry ─────────────
+  if(!GUEST_MODE){
+    _supabase.auth.onAuthStateChange((event, session)=>{
+      if(event==='SIGNED_OUT'){
+        window.location.href='spine-goals_login.html';
+      } else if(event==='TOKEN_REFRESHED' && session){
+        currentUser=session.user;
+      }
+    });
+  }
+})();
 </script>
 <div id="menu-container"></div>
 <!-- © 2026 Spine. All rights reserved. -->
