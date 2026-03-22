@@ -345,7 +345,7 @@
   <button class="btn-primary" id="submit-btn" onclick="submit()">Sign In</button>
 
   <!-- Guest bypass -->
-  <a class="guest-link" href="goal-tracker_v3.7.html?guest=true">Continue without an account →</a>
+  <a class="guest-link" href="index.html?guest=true">Continue without an account →</a>
 
   <!-- Helper -->
   <p class="helper" id="helper-text" style="margin-top:0.6rem">
@@ -392,7 +392,7 @@
     setTimeout(() => {
       btn.disabled = false;
       btn.textContent = mode === 'signup' ? 'Create account' : 'Sign in';
-      // On success: window.location.href = 'goal-tracker_v3.5.html';
+      // On success: window.location.href = 'index.html';
     }, 1400);
   }
 
@@ -443,7 +443,7 @@
   }
 
   function guestAccess() {
-    window.location.href = 'goal-tracker_v3.7.html?guest=true';
+    window.location.href = 'index.html?guest=true';
   }
 
   /* ── Modals ── */
