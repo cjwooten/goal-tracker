@@ -2,6 +2,14 @@
 <!-- Spine Goals · Login · v1.0 · 2026-03-19 -->
 <html lang="en">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RN1TNMEYB0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-RN1TNMEYB0');
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Spine Goals — Sign in</title>
@@ -299,10 +307,15 @@
     cursor: pointer; transition: background 0.12s;
   }
   .btn-modal:hover { background: var(--bg3); }
+
+  @media (max-width: 500px) {
+    .field-input { font-size: 16px !important; }
+  }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
+<div style="display:flex;flex-direction:column;align-items:center;width:100%;max-width:380px">
 <div class="card">
 
   <!-- Logo -->
@@ -356,7 +369,13 @@
 
 </div>
 
+<p style="text-align:center;font-size:10px;color:var(--text3);margin-top:1rem;opacity:0.4" id="version-tag"></p>
+</div>
+
 <script>
+  const APP_VERSION='v3.7.1';
+  document.getElementById('version-tag').textContent=APP_VERSION;
+
   // ── Supabase client ─────────────────────────────────────────────────────────
   const SUPABASE_URL='https://gygdmdaohsiiphqqufgn.supabase.co';
   const SUPABASE_ANON_KEY='sb_publishable_06vce6cx2R4-rL-9PdZ9hg_GyxAbNYa';

@@ -1,7 +1,15 @@
 <!DOCTYPE html>
-<!-- Spine Goals · v3.7 · 2026-03-21 -->
+<!-- Spine Goals · v3.7.1 · 2026-03-21 -->
 <html lang="en">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RN1TNMEYB0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-RN1TNMEYB0');
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Spine Goals</title>
@@ -386,6 +394,7 @@
 
 <script>
 let gid=1,sid=1,dragging=null,dragGoalId=null,showWelcome=false;
+const APP_VERSION='v3.7.1';
 const STATUSES=['blocked','active','waiting','done'];
 const STORE_KEY='goal-tracker-v3.7';
 
@@ -1279,7 +1288,7 @@ function openMenu(){
             ${logoSvg}
             <div style="display:flex;align-items:center;gap:6px;margin-top:8px">
               <span style="font-size:9px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--text3);background:var(--bg2);border:0.5px solid var(--border2);border-radius:20px;padding:2px 7px">Alpha</span>
-              <span style="font-size:10px;color:var(--text3)">v3.7</span>
+              <span style="font-size:10px;color:var(--text3)">${APP_VERSION}</span>
             </div>
           </div>
           <button class="menu-close" onclick="closeMenu()" aria-label="Close menu">×</button>
@@ -1346,7 +1355,7 @@ function openMenu(){
         <div class="menu-section">
           <div class="menu-section-label">What's new</div>
           <div style="padding:4px 10px 6px">
-            <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:3px">v3.7 · Mar 2026</div>
+            <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:3px">${APP_VERSION} · Mar 2026</div>
             <p style="font-size:11.5px;line-height:1.6;color:var(--text3)">Save status indicator, spine line logic, "waiting" step tag, and UI polish.</p>
           </div>
         </div>
