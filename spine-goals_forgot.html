@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Spine Goals · Forgot Password · v1.0 · 2026-03-19 -->
+<!-- Spine Goals · Forgot Password · v3.7.8 · 2026-03-23 -->
 <html lang="en">
 <head>
 <!-- Google tag (gtag.js) -->
@@ -239,6 +239,22 @@
     <p class="helper">Check your spam folder if it doesn't arrive within a minute.</p>
   </div>
 
+  <!-- Set new password — shown when landing from reset link -->
+  <div id="new-password-form" style="display:none;width:100%">
+    <div class="heading">
+      <h1>Set new password</h1>
+      <p>Choose a strong password for your account.</p>
+    </div>
+    <div class="fields">
+      <label class="field-label" for="f-new-password">New password</label>
+      <input class="field-input" id="f-new-password" type="password" placeholder="Choose a password"
+        autocomplete="new-password" oninput="clearNewPasswordError()"
+        onkeydown="if(event.key==='Enter')updatePassword()">
+      <span class="field-error" id="err-new-password"></span>
+    </div>
+    <button class="btn-primary" id="set-password-btn" onclick="updatePassword()">Set new password</button>
+  </div>
+
   <!-- Success state — shown after submit -->
   <div class="success-state" id="success-state">
     <div class="success-icon">
@@ -278,7 +294,7 @@
     btn.innerHTML = '<span class="spinner"></span>';
 
     const { error } = await _supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: 'https://spinegoals.com'
+      redirectTo: 'https://spinegoals.com/spine-goals_forgot.html'
     });
 
     btn.disabled = false;
@@ -305,7 +321,7 @@
     btn.textContent = 'Sending...';
     btn.disabled = true;
     await _supabase.auth.resetPasswordForEmail(_lastEmail, {
-      redirectTo: 'https://spinegoals.com'
+      redirectTo: 'https://spinegoals.com/spine-goals_forgot.html'
     });
     btn.textContent = 'Sent!';
     setTimeout(() => { btn.textContent = 'Resend email'; btn.disabled = false; }, 3000);
@@ -321,6 +337,48 @@
   function clearError() {
     document.getElementById('f-email').classList.remove('error');
     document.getElementById('err-email').style.display = 'none';
+  }
+
+  // ── Password recovery redirect handler ──────────────────────────────────────
+  _supabase.auth.onAuthStateChange((event) => {
+    if (event === 'PASSWORD_RECOVERY') showNewPasswordForm();
+  });
+
+  function showNewPasswordForm() {
+    document.getElementById('reset-form').style.display = 'none';
+    document.getElementById('form-heading').style.display = 'none';
+    document.getElementById('success-state').style.display = 'none';
+    document.getElementById('new-password-form').style.display = 'block';
+  }
+
+  async function updatePassword() {
+    const pw = document.getElementById('f-new-password').value;
+    if (!pw || pw.length < 8) {
+      const err = document.getElementById('err-new-password');
+      err.textContent = 'Password must be at least 8 characters.';
+      err.style.display = 'block';
+      document.getElementById('f-new-password').classList.add('error');
+      return;
+    }
+    const btn = document.getElementById('set-password-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>';
+    const { error } = await _supabase.auth.updateUser({ password: pw });
+    btn.disabled = false;
+    btn.textContent = 'Set new password';
+    if (error) {
+      const err = document.getElementById('err-new-password');
+      err.textContent = error.message;
+      err.style.display = 'block';
+      document.getElementById('f-new-password').classList.add('error');
+    } else {
+      window.location.href = '/';
+    }
+  }
+
+  function clearNewPasswordError() {
+    document.getElementById('f-new-password').classList.remove('error');
+    document.getElementById('err-new-password').style.display = 'none';
   }
 </script>
 <!-- © 2026 Spine. All rights reserved. -->
