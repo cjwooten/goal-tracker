@@ -447,17 +447,23 @@
   }
 
   function showVerifyEmail(email) {
-    document.querySelector('.card').innerHTML = `
-      <div style="text-align:center;padding:1rem 0">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" style="margin-bottom:1.25rem;opacity:0.5" xmlns="http://www.w3.org/2000/svg">
-          <rect x="2" y="4" width="20" height="16" rx="2" stroke="var(--text1)" stroke-width="1.5"/>
-          <path d="M2 7l10 7 10-7" stroke="var(--text1)" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        <h2 style="font-size:16px;font-weight:500;margin-bottom:0.5rem;color:var(--text1)">Check your email</h2>
-        <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:0.25rem">We sent a confirmation link to</p>
-        <p style="font-size:13px;font-weight:500;color:var(--text1);margin-bottom:1.25rem">${email}</p>
-        <p style="font-size:12px;color:var(--text3);line-height:1.6;margin-bottom:1.5rem">Click the link in the email to activate your account, then sign in here.</p>
-        <a href="spine-goals_login.html" style="font-size:13px;color:var(--text2);text-decoration:none;border-bottom:0.5px solid var(--border2)">Back to sign in</a>
+    document.getElementById('modal-container').innerHTML = `
+      <div class="modal-bg" onclick="if(event.target===this)closeModal()">
+        <div class="modal" style="width:340px;text-align:center;padding:2rem 1.75rem">
+          <div style="width:48px;height:48px;background:#d1fae5;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="4" width="20" height="16" rx="2" stroke="#065f46" stroke-width="1.5"/>
+              <path d="M2 7l10 7 10-7" stroke="#065f46" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <p style="font-size:15px;font-weight:500;color:var(--text1);margin-bottom:8px">Check your email</p>
+          <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:4px">We sent a confirmation link to</p>
+          <p style="font-size:13px;font-weight:500;color:var(--text1);margin-bottom:1rem">${email}</p>
+          <p style="font-size:12px;color:var(--text3);line-height:1.6;margin-bottom:1.5rem">Click the link in the email to activate your account, then sign in here.</p>
+          <div class="modal-actions">
+            <button class="btn-modal" onclick="closeModal()">Back to sign in</button>
+          </div>
+        </div>
       </div>
     `;
   }

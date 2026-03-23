@@ -1324,42 +1324,42 @@ function openAccountModal(){
   const email=currentUser?.email||'';
   document.getElementById('modal-container').innerHTML=`
   <div class="modal-bg" style="align-items:flex-start;padding:5vh 1rem;overflow-y:auto" onclick="if(event.target===this)closeModal()">
-    <div class="modal" style="width:400px;margin:auto">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem">
+    <div class="modal" style="width:360px;margin:auto;padding:1.25rem">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem">
         <h3 style="margin:0">Account</h3>
         <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;color:var(--text3);padding:2px 4px;font-size:18px;line-height:1;border-radius:4px">✕</button>
       </div>
 
       <!-- Name -->
-      <div style="margin-bottom:1.1rem">
+      <div style="margin-bottom:1rem">
         <div style="font-size:10px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Display name</div>
         <div style="display:flex;align-items:center;gap:8px">
-          <input id="acct-name" value="${name}" style="flex:1;font-size:13px;padding:7px 10px;border:0.5px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text1);font-family:var(--font)" placeholder="Your name">
+          <input id="acct-name" value="${name}" style="flex:1;font-size:13px;padding:7px 10px;border:0.5px solid var(--border2);border-radius:var(--radius-md);background:var(--bg2);color:var(--text1);font-family:var(--font)" placeholder="Your name">
           <button onclick="saveAccountName()" class="btn" style="font-size:12px;padding:6px 12px;flex-shrink:0">Save</button>
         </div>
         <div id="acct-name-msg" style="font-size:11px;margin-top:4px;min-height:14px"></div>
       </div>
 
       <!-- Email -->
-      <div style="margin-bottom:1.4rem">
+      <div style="margin-bottom:1.25rem">
         <div style="font-size:10px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Email</div>
         <div style="display:flex;align-items:center;gap:8px">
-          <input id="acct-email" value="${email}" style="flex:1;font-size:13px;padding:7px 10px;border:0.5px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text1);font-family:var(--font)" placeholder="email@example.com">
+          <input id="acct-email" value="${email}" style="flex:1;font-size:13px;padding:7px 10px;border:0.5px solid var(--border2);border-radius:var(--radius-md);background:var(--bg2);color:var(--text1);font-family:var(--font)" placeholder="email@example.com">
           <button onclick="saveAccountEmail()" class="btn" style="font-size:12px;padding:6px 12px;flex-shrink:0">Save</button>
         </div>
         <div id="acct-email-msg" style="font-size:11px;margin-top:4px;min-height:14px;color:var(--text3)">Changing your email will require re-confirmation.</div>
       </div>
 
       <!-- Data -->
-      <div style="border-top:0.5px solid var(--border1);padding-top:1.1rem;margin-bottom:1.1rem">
+      <div style="border-top:0.5px solid var(--border1);padding-top:1rem;margin-bottom:1rem">
         <div style="font-size:10px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Data</div>
         <button class="btn" onclick="closeModal();setTimeout(openDataModal,220)" style="font-size:12px;padding:7px 14px;width:100%">Import / Export data</button>
       </div>
 
       <!-- Account options -->
-      <div style="border-top:0.5px solid var(--border1);padding-top:1.1rem;display:flex;gap:8px;justify-content:space-between">
+      <div style="border-top:0.5px solid var(--border1);padding-top:1rem;display:flex;gap:8px;justify-content:space-between">
         <button class="btn" onclick="signOut()" style="font-size:12px;padding:7px 14px">Sign out</button>
-        <button onclick="openDeleteAccountModal()" style="font-size:12px;padding:7px 14px;background:none;border:0.5px solid #dc2626;color:#dc2626;border-radius:var(--radius-sm);cursor:pointer;font-family:var(--font);transition:background 0.12s" onmouseover="this.style.background='rgba(220,38,38,0.06)'" onmouseout="this.style.background='none'">Delete account</button>
+        <button onclick="openDeleteAccountModal()" style="font-size:12px;padding:7px 14px;background:none;border:0.5px solid #dc2626;color:#dc2626;border-radius:var(--radius-md);cursor:pointer;font-family:var(--font);transition:background 0.12s" onmouseover="this.style.background='rgba(220,38,38,0.06)'" onmouseout="this.style.background='none'">Delete account</button>
       </div>
     </div>
   </div>`;
@@ -1402,7 +1402,7 @@ function openDeleteAccountModal(){
       </label>
       <div style="display:flex;gap:8px;justify-content:flex-end">
         <button class="btn" onclick="openAccountModal()">← Back</button>
-        <button id="delete-account-btn" disabled onclick="deleteAccount()" style="font-size:12px;padding:7px 14px;background:#dc2626;color:#fff;border:none;border-radius:var(--radius-sm);cursor:pointer;font-family:var(--font);opacity:0.4;transition:opacity 0.15s" onmouseover="if(!this.disabled)this.style.background='#b91c1c'" onmouseout="this.style.background='#dc2626'">Delete my account</button>
+        <button id="delete-account-btn" disabled onclick="deleteAccount()" style="font-size:12px;padding:7px 14px;background:#dc2626;color:#fff;border:none;border-radius:var(--radius-md);cursor:pointer;font-family:var(--font);opacity:0.4;transition:opacity 0.15s" onmouseover="if(!this.disabled)this.style.background='#b91c1c'" onmouseout="this.style.background='#dc2626'">Delete my account</button>
       </div>
     </div>
   </div>`;
