@@ -1532,6 +1532,14 @@ function setTheme(mode,btn){
 
 // ── Session check + app init ──────────────────────────────────────────────────
 (async()=>{
+  // If landing from an email confirmation link, sign out any existing session
+  // and redirect to login so the correct account gets signed in cleanly
+  if(window.location.hash.includes('type=signup')||window.location.hash.includes('type=email_change')){
+    await _supabase.auth.signOut();
+    window.location.replace('/spine-goals_login.html?confirmed=1');
+    return;
+  }
+
   const urlGuest=new URLSearchParams(window.location.search).get('guest')==='true';
   if(urlGuest){
     GUEST_MODE=true;

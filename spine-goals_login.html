@@ -389,9 +389,21 @@
   let mode = 'signin'; // 'signin' | 'signup'
 
   // Pre-select tab from URL param (e.g. ?mode=signup)
+  // Also handle ?confirmed=1 from email confirmation redirect
   (function(){
-    const p = new URLSearchParams(window.location.search).get('mode');
-    if (p === 'signup') setTimeout(() => setMode('signup'), 0);
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('mode') === 'signup') setTimeout(() => setMode('signup'), 0);
+    if (params.get('confirmed') === '1') {
+      setTimeout(() => {
+        const el = document.getElementById('error-password') || document.getElementById('error-email');
+        // Show a friendly confirmed banner above the form
+        const banner = document.createElement('p');
+        banner.style.cssText = 'font-size:12px;color:#1D9E75;text-align:center;margin-bottom:0.75rem;font-weight:500';
+        banner.textContent = '✓ Email confirmed — you can now sign in';
+        const form = document.querySelector('.card');
+        if (form) form.insertBefore(banner, form.firstChild);
+      }, 100);
+    }
   })();
 
   function setMode(m) {
