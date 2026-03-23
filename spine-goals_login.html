@@ -559,33 +559,17 @@
   function openPrivacyModal() {
     document.getElementById('modal-container').innerHTML = `
       <div class="modal-bg" onclick="if(event.target===this)closeModal()">
-        <div class="modal" style="max-height:80vh;overflow-y:auto">
-          <h3>Privacy Policy</h3>
-          <p style="font-size:11px;color:var(--text3);margin-bottom:1rem">Last updated: March 2026</p>
-          <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:0.75rem">
-            <strong style="color:var(--text1)">1. Information we collect</strong><br>
-            We collect information you provide directly to us, such as your name and email address when you create an account. We also collect goal and progress data you enter into the app.
-          </p>
-          <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:0.75rem">
-            <strong style="color:var(--text1)">2. How we use your information</strong><br>
-            We use the information we collect to provide, maintain, and improve the app, to sync your data across devices, and to communicate with you about the service.
-          </p>
-          <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:0.75rem">
-            <strong style="color:var(--text1)">3. Data storage</strong><br>
-            Your data is stored securely. Goal data is stored locally on your device and, when signed in, synced to our secure cloud infrastructure. We do not sell your personal data to third parties.
-          </p>
-          <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:0.75rem">
-            <strong style="color:var(--text1)">4. Data retention</strong><br>
-            We retain your data for as long as your account is active. You may request deletion of your account and associated data at any time by contacting us.
-          </p>
-          <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:0.75rem">
-            <strong style="color:var(--text1)">5. Contact</strong><br>
-            For privacy-related questions, please contact us at <a href="mailto:support@spinegoals.com" style="color:var(--text1)">support@spinegoals.com</a>.
-          </p>
-          <p style="font-size:11px;color:var(--text3);line-height:1.5;margin-bottom:1rem;padding:10px;background:var(--bg2);border-radius:var(--radius-md)">
-            This is placeholder text for development purposes. Final privacy policy to be reviewed and approved before launch.
-          </p>
-          <div class="modal-actions">
+        <div class="modal">
+          <h3 style="margin-bottom:1rem">Privacy Policy</h3>
+          <p style="font-size:11px;color:var(--text3);margin-bottom:1rem">Last updated: March 23, 2026</p>
+          <ul style="font-size:13px;line-height:1.75;color:var(--text2);padding-left:1.2rem;margin-bottom:1.25rem">
+            <li style="margin-bottom:0.5rem">We collect your email address and the goals and steps you create</li>
+            <li style="margin-bottom:0.5rem">Your data is stored securely on Supabase — we don't sell or share it</li>
+            <li style="margin-bottom:0.5rem">We use Google Analytics to understand how the app is used (anonymised)</li>
+            <li>You can request account deletion at any time by emailing <a href="mailto:hello@spinegoals.com" style="color:var(--text2)">hello@spinegoals.com</a></li>
+          </ul>
+          <div class="modal-actions" style="justify-content:space-between;align-items:center">
+            <a href="/privacy.html" target="_blank" rel="noopener" style="font-size:12px;color:var(--text3);text-decoration:none;border-bottom:0.5px solid var(--border2);padding-bottom:1px">Read full policy &#x2197;</a>
             <button class="btn-modal" onclick="closeModal()">Close</button>
           </div>
         </div>
@@ -595,33 +579,17 @@
   function openTermsModal() {
     document.getElementById('modal-container').innerHTML = `
       <div class="modal-bg" onclick="if(event.target===this)closeModal()">
-        <div class="modal" style="max-height:80vh;overflow-y:auto">
-          <h3>Terms of Service</h3>
-          <p style="font-size:11px;color:var(--text3);margin-bottom:1rem">Last updated: March 2026</p>
-          <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:0.75rem">
-            <strong style="color:var(--text1)">1. Acceptance of terms</strong><br>
-            By accessing or using Spine Goals, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use the app.
-          </p>
-          <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:0.75rem">
-            <strong style="color:var(--text1)">2. Use of the service</strong><br>
-            You may use Spine Goals for your personal, non-commercial goal tracking. You are responsible for maintaining the confidentiality of your account credentials.
-          </p>
-          <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:0.75rem">
-            <strong style="color:var(--text1)">3. Your content</strong><br>
-            You retain ownership of all goals and data you enter into the app. By using the service, you grant us a limited license to store and sync your data solely for the purpose of providing the service to you.
-          </p>
-          <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:0.75rem">
-            <strong style="color:var(--text1)">4. Availability</strong><br>
-            We strive to keep Spine Goals available at all times but cannot guarantee uninterrupted access. We reserve the right to modify or discontinue the service with reasonable notice.
-          </p>
-          <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:0.75rem">
-            <strong style="color:var(--text1)">5. Limitation of liability</strong><br>
-            Spine Goals is provided "as is." We are not liable for any indirect, incidental, or consequential damages arising from your use of the app.
-          </p>
-          <p style="font-size:11px;color:var(--text3);line-height:1.5;margin-bottom:1rem;padding:10px;background:var(--bg2);border-radius:var(--radius-md)">
-            This is placeholder text for development purposes. Final terms to be reviewed and approved before launch.
-          </p>
-          <div class="modal-actions">
+        <div class="modal">
+          <h3 style="margin-bottom:1rem">Terms of Service</h3>
+          <p style="font-size:11px;color:var(--text3);margin-bottom:1rem">Last updated: March 23, 2026</p>
+          <ul style="font-size:13px;line-height:1.75;color:var(--text2);padding-left:1.2rem;margin-bottom:1.25rem">
+            <li style="margin-bottom:0.5rem">Use Spine Goals for personal goal tracking — commercial resale is not permitted</li>
+            <li style="margin-bottom:0.5rem">You own your data; we need it only to provide the service</li>
+            <li style="margin-bottom:0.5rem">The service is provided as-is; liability is limited to $100</li>
+            <li>Users must be 13 or older</li>
+          </ul>
+          <div class="modal-actions" style="justify-content:space-between;align-items:center">
+            <a href="/terms.html" target="_blank" rel="noopener" style="font-size:12px;color:var(--text3);text-decoration:none;border-bottom:0.5px solid var(--border2);padding-bottom:1px">Read full terms &#x2197;</a>
             <button class="btn-modal" onclick="closeModal()">Close</button>
           </div>
         </div>
