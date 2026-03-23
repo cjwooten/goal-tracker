@@ -1550,7 +1550,7 @@ function setTheme(mode,btn){
   }
   await load();
   render(true); // silent — don't mark as unsaved on initial load
-  if(GUEST_MODE) setSaveStatus('saved');
+  setSaveStatus('saved'); // show initial saved state for both guest and logged-in
   if(showWelcome) openWelcome();
 
   // ── Auth state listener — handle token refresh + session expiry ─────────────
