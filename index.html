@@ -468,10 +468,10 @@ let _saveTimer=null;
 function setSaveStatus(state){
   const el=document.getElementById('save-status');if(!el)return;
   clearTimeout(_saveTimer);
-  // Guest mode: show "Not saved · Demo" after first change, otherwise "Demo mode"
+  // Guest mode: show "Not Saved · Demo" after first change, otherwise "Demo mode"
   if(GUEST_MODE){
     el.className='save-status visible saved';
-    const demoLabel=_demoUnsaved?'Not saved · Demo':'Demo mode';
+    const demoLabel=_demoUnsaved?'Not Saved · Demo':'Demo mode';
     el.innerHTML=`<div class="save-dot" style="background:var(--text3)"></div><span class="save-error-link" onclick="openGuestModal()" title="About demo mode">${demoLabel}</span>`;
     return;
   }
