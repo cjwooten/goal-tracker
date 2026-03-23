@@ -1318,6 +1318,122 @@ async function signOut(){
   window.location.href='spine-goals_login.html';
 }
 
+// ── Account modal ─────────────────────────────────────────────────────────────
+function openAccountModal(){
+  const name=currentUser?.user_metadata?.full_name||'';
+  const email=currentUser?.email||'';
+  document.getElementById('modal-container').innerHTML=`
+  <div class="modal-bg" style="align-items:flex-start;padding:5vh 1rem;overflow-y:auto" onclick="if(event.target===this)closeModal()">
+    <div class="modal" style="width:400px;margin:auto">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem">
+        <h3 style="margin:0">Account</h3>
+        <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;color:var(--text3);padding:2px 4px;font-size:18px;line-height:1;border-radius:4px">✕</button>
+      </div>
+
+      <!-- Name -->
+      <div style="margin-bottom:1.1rem">
+        <div style="font-size:10px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Display name</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input id="acct-name" value="${name}" style="flex:1;font-size:13px;padding:7px 10px;border:0.5px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text1);font-family:var(--font)" placeholder="Your name">
+          <button onclick="saveAccountName()" class="btn" style="font-size:12px;padding:6px 12px;flex-shrink:0">Save</button>
+        </div>
+        <div id="acct-name-msg" style="font-size:11px;margin-top:4px;min-height:14px"></div>
+      </div>
+
+      <!-- Email -->
+      <div style="margin-bottom:1.4rem">
+        <div style="font-size:10px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Email</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input id="acct-email" value="${email}" style="flex:1;font-size:13px;padding:7px 10px;border:0.5px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text1);font-family:var(--font)" placeholder="email@example.com">
+          <button onclick="saveAccountEmail()" class="btn" style="font-size:12px;padding:6px 12px;flex-shrink:0">Save</button>
+        </div>
+        <div id="acct-email-msg" style="font-size:11px;margin-top:4px;min-height:14px;color:var(--text3)">Changing your email will require re-confirmation.</div>
+      </div>
+
+      <!-- Data -->
+      <div style="border-top:0.5px solid var(--border1);padding-top:1.1rem;margin-bottom:1.1rem">
+        <div style="font-size:10px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Data</div>
+        <button class="btn" onclick="closeModal();setTimeout(openDataModal,220)" style="font-size:12px;padding:7px 14px;width:100%">Import / Export data</button>
+      </div>
+
+      <!-- Account options -->
+      <div style="border-top:0.5px solid var(--border1);padding-top:1.1rem;display:flex;gap:8px;justify-content:space-between">
+        <button class="btn" onclick="signOut()" style="font-size:12px;padding:7px 14px">Sign out</button>
+        <button onclick="openDeleteAccountModal()" style="font-size:12px;padding:7px 14px;background:none;border:0.5px solid #dc2626;color:#dc2626;border-radius:var(--radius-sm);cursor:pointer;font-family:var(--font);transition:background 0.12s" onmouseover="this.style.background='rgba(220,38,38,0.06)'" onmouseout="this.style.background='none'">Delete account</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+async function saveAccountName(){
+  const val=document.getElementById('acct-name').value.trim();
+  const msg=document.getElementById('acct-name-msg');
+  if(!val){msg.style.color='#dc2626';msg.textContent='Please enter a name.';return;}
+  msg.style.color='var(--text3)';msg.textContent='Saving…';
+  const {error}=await _supabase.auth.updateUser({data:{full_name:val}});
+  if(error){msg.style.color='#dc2626';msg.textContent=error.message;}
+  else{
+    currentUser.user_metadata=currentUser.user_metadata||{};
+    currentUser.user_metadata.full_name=val;
+    msg.style.color='#1D9E75';msg.textContent='✓ Name updated';
+  }
+}
+
+async function saveAccountEmail(){
+  const val=document.getElementById('acct-email').value.trim();
+  const msg=document.getElementById('acct-email-msg');
+  if(!val||!val.includes('@')){msg.style.color='#dc2626';msg.textContent='Please enter a valid email.';return;}
+  msg.style.color='var(--text3)';msg.textContent='Saving…';
+  const {error}=await _supabase.auth.updateUser({email:val});
+  if(error){msg.style.color='#dc2626';msg.textContent=error.message;}
+  else{msg.style.color='#1D9E75';msg.textContent='✓ Confirmation sent to both addresses';}
+}
+
+function openDeleteAccountModal(){
+  document.getElementById('modal-container').innerHTML=`
+  <div class="modal-bg" onclick="if(event.target===this)closeModal()">
+    <div class="modal" style="width:400px">
+      <h3 style="margin-bottom:0.75rem;color:#dc2626">Delete account</h3>
+      <p style="font-size:13px;line-height:1.65;color:var(--text2);margin-bottom:1rem">This will permanently delete your account and all your goals and steps. <strong style="color:var(--text1)">This cannot be undone.</strong></p>
+      <p style="font-size:13px;line-height:1.65;color:var(--text2);margin-bottom:1.25rem">If you'd like to keep your data, please <span onclick="closeModal();setTimeout(openDataModal,220)" style="color:var(--accent);cursor:pointer;text-decoration:underline;text-underline-offset:2px">export it first</span> before continuing.</p>
+      <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;margin-bottom:1.5rem">
+        <input type="checkbox" id="delete-confirm-check" onchange="document.getElementById('delete-account-btn').disabled=!this.checked" style="margin-top:2px;flex-shrink:0;accent-color:#dc2626">
+        <span style="font-size:12.5px;line-height:1.6;color:var(--text2)">I understand my account and all data will be permanently deleted and Spine Goals cannot recover it.</span>
+      </label>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn" onclick="openAccountModal()">← Back</button>
+        <button id="delete-account-btn" disabled onclick="deleteAccount()" style="font-size:12px;padding:7px 14px;background:#dc2626;color:#fff;border:none;border-radius:var(--radius-sm);cursor:pointer;font-family:var(--font);opacity:0.4;transition:opacity 0.15s" onmouseover="if(!this.disabled)this.style.background='#b91c1c'" onmouseout="this.style.background='#dc2626'">Delete my account</button>
+      </div>
+    </div>
+  </div>`;
+  // Enable button style when checkbox checked
+  document.getElementById('delete-confirm-check').addEventListener('change',function(){
+    document.getElementById('delete-account-btn').style.opacity=this.checked?'1':'0.4';
+    document.getElementById('delete-account-btn').style.cursor=this.checked?'pointer':'default';
+  });
+}
+
+async function deleteAccount(){
+  const btn=document.getElementById('delete-account-btn');
+  btn.disabled=true;btn.textContent='Deleting…';
+  try{
+    // Delete all user data first
+    await _supabase.from('goals').delete().eq('user_id',currentUser.id);
+    // Delete the auth user via RPC (requires delete_user function in Supabase)
+    const {error}=await _supabase.rpc('delete_user');
+    if(error) throw error;
+    await _supabase.auth.signOut();
+    localStorage.removeItem(STORE_KEY);
+    window.location.href='spine-goals_login.html';
+  } catch(e){
+    btn.disabled=false;btn.textContent='Delete my account';
+    const p=document.createElement('p');
+    p.style.cssText='font-size:11px;color:#dc2626;margin-top:8px;text-align:right';
+    p.textContent=e.message||'Something went wrong. Please try again or contact support.';
+    btn.parentElement.after(p);
+  }
+}
+
 // ── Hamburger menu panel ──────────────────────────────────────────────────────
 function openMenu(){
   const logoSvg=getLogoSvg('26px','0');
@@ -1376,21 +1492,13 @@ function openMenu(){
             </span>
             Sign in
           </div>` : `
-          <div class="menu-item muted" style="cursor:default">
+          <div class="menu-item" onclick="closeMenu();setTimeout(openAccountModal,220)">
             <span class="menu-item-icon">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="7" cy="4.5" r="2.5"/><path d="M1.5 13c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/>
               </svg>
             </span>
-            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${currentUser?.email||'Account'}</span>
-          </div>
-          <div class="menu-item" onclick="signOut()">
-            <span class="menu-item-icon">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 7h7M9 4.5l2.5 2.5L9 9.5"/><path d="M7 2H2.5A1.5 1.5 0 001 3.5v7A1.5 1.5 0 002.5 12H7"/>
-              </svg>
-            </span>
-            Sign out
+            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${currentUser?.user_metadata?.full_name||currentUser?.email||'Account'}</span>
           </div>`}
         </div>
 

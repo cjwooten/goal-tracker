@@ -435,7 +435,8 @@
 
     let error, data;
     if (mode === 'signup') {
-      ({ data, error } = await _supabase.auth.signUp({ email, password }));
+      const name = document.getElementById('f-name').value.trim();
+      ({ data, error } = await _supabase.auth.signUp({ email, password, options: { data: { full_name: name } } }));
     } else {
       ({ data, error } = await _supabase.auth.signInWithPassword({ email, password }));
     }
