@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Spine Goals · v3.7.6 · 2026-03-23 -->
+<!-- Spine Goals · v3.8 · 2026-03-23 -->
 <html lang="en">
 <head>
 <!-- Google tag (gtag.js) -->
@@ -126,6 +126,8 @@
   .goal-meta { flex: 1; min-width: 0; }
   .goal-name { font-size: 14px; font-weight: 500; color: var(--text1); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .goal-sub  { font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .goal-due-badge { cursor: pointer; border-radius: 3px; padding: 0 2px; margin: 0 -2px; opacity: 0.75; transition: background 0.12s, opacity 0.12s; }
+  .goal-due-badge:hover { background: var(--bg3); opacity: 1; }
   .goal-name-view { display: inline; cursor: text; border-radius: 3px; padding: 1px 3px; margin: -1px -3px; transition: background 0.12s; }
   .goal-name-view:hover { background: var(--bg2); }
   .goal-name-input { font-size: 14px; font-weight: 500; font-family: var(--font); color: var(--text1); border: 0.5px solid var(--border3); border-radius: 4px; padding: 1px 4px; background: var(--bg); outline: none; width: 100%; }
@@ -211,12 +213,31 @@
   .step-title-input { font-size: 13px; font-family: var(--font); color: var(--text1); line-height: 1.4; border: 0.5px solid var(--border3); border-radius: 4px; padding: 1px 4px; background: var(--bg); outline: none; width: 100%; }
 
   .step-meta { display: flex; align-items: center; gap: 6px; margin-top: 3px; flex-wrap: wrap; }
-  .step-dur { font-size: 11px; color: var(--text2); cursor: text; border-radius: 3px; padding: 1px 3px; margin-left: -3px; transition: background 0.12s; }
-  .step-dur:hover { background: var(--bg2); }
-  .step-dur.placeholder { color: var(--text3); font-style: italic; }
-  .step-dur-input { font-size: 11px; font-family: var(--font); color: var(--text2); border: 0.5px solid var(--border3); border-radius: 3px; padding: 1px 4px; background: var(--bg); outline: none; width: 90px; }
+  .step-dur {
+    font-size: 11px; color: var(--text2); cursor: text;
+    border-radius: 20px; padding: 2px 8px;
+    border: 0.5px solid var(--border2); background: var(--bg2);
+    display: inline-flex; align-items: center;
+    transition: background 0.12s, border-color 0.12s;
+  }
+  .step-dur:hover { background: var(--bg3); border-color: var(--border3); }
+  .step-dur.placeholder { color: var(--text3); font-style: italic; border-color: var(--border1); background: transparent; }
+  .step-dur.placeholder:hover { background: var(--bg2); border-color: var(--border2); }
+  .step-dur-input { font-size: 11px; font-family: var(--font); color: var(--text2); border: 0.5px solid var(--border3); border-radius: 20px; padding: 2px 8px; background: var(--bg); outline: none; width: 110px; }
 
-  .tag { font-size: 10px; padding: 1px 6px; border-radius: 4px; border: 0.5px solid; font-weight: 500; }
+  .step-due {
+    font-size: 11px; color: var(--text2); cursor: pointer;
+    border-radius: 20px; padding: 2px 8px;
+    border: 0.5px solid var(--border2); background: var(--bg2);
+    display: inline-flex; align-items: center;
+    transition: background 0.12s, border-color 0.12s, opacity 0.15s;
+  }
+  .step-due:hover { background: var(--bg3); border-color: var(--border3); }
+  .step-due.placeholder { color: var(--text3); font-style: italic; border-color: var(--border1); background: transparent; opacity: 0; }
+  .step-row:hover .step-due.placeholder { opacity: 1; }
+  .step-due-input { font-size: 11px; font-family: var(--font); color: var(--text2); border: 0.5px solid var(--border3); border-radius: 20px; padding: 2px 8px; background: var(--bg); outline: none; cursor: pointer; }
+
+  .tag { font-size: 10px; padding: 2px 8px; border-radius: 20px; border: 0.5px solid; font-weight: 500; }
   .tag-wait   { background: #dbeeff; color: #1d4ed8; border-color: #93c5fd; }
   .tag-active { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
   .tag-done   { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
@@ -227,6 +248,32 @@
   .step-action-btn:hover { color: var(--text1) !important; background: var(--bg2); }
   .step-del-btn:hover  { color: #dc2626 !important; background: #fee2e2; }
   .step-dup-btn:hover  { color: #185FA5 !important; background: #dbeeff; }
+
+  /* ── Step & goal notes ─────────────────────────────────────────────────── */
+  .step-note {
+    font-size: 11.5px; color: var(--text3); line-height: 1.4; cursor: pointer;
+    border-radius: 3px; padding: 1px 3px; margin: 2px 0 0 -3px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+    display: block; transition: background 0.12s, opacity 0.15s; opacity: 0.22;
+  }
+  .step-note.has-note { color: var(--text2); opacity: 0.8; }
+  .step-row:hover .step-note { opacity: 0.55; }
+  .step-row:hover .step-note.has-note { opacity: 1; }
+  .step-note:hover { background: var(--bg2); }
+  .step-note a { color: var(--accent); pointer-events: auto; }
+
+  .goal-note {
+    font-size: 11px; font-style: italic; color: var(--text2);
+    overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+    cursor: pointer; padding: 1px 2px; margin-left: -2px;
+    border-radius: 3px; max-width: 100%; display: block;
+    transition: background 0.12s, opacity 0.15s; opacity: 0.22;
+  }
+  .goal-note.has-note { opacity: 0.7; }
+  .goal-header:hover .goal-note { opacity: 0.5; }
+  .goal-header:hover .goal-note.has-note { opacity: 1; }
+  .goal-note:hover { background: var(--bg2); }
+  .goal-note a { color: var(--accent); pointer-events: auto; }
 
   .add-row { padding: 4px 16px 12px; }
   .add-input { width: 100%; border: 0.5px solid var(--border2); border-radius: var(--radius-md); padding: 8px 12px; font-size: 12px; font-family: var(--font); color: var(--text1); background: var(--bg2); outline: none; }
@@ -772,6 +819,27 @@ function renderSpineOnly(g){
   </div>`;
 }
 
+// ── URL linkifier ─────────────────────────────────────────────────────────────
+function linkify(str){
+  const parts=[];let last=0;
+  const re=/(https?:\/\/[^\s<>"']+[^\s<>"'.,!?;:])/g;
+  let m;
+  while((m=re.exec(str))!==null){
+    if(m.index>last)parts.push({t:'text',v:str.slice(last,m.index)});
+    parts.push({t:'url',v:m[0]});
+    last=m.index+m[0].length;
+  }
+  if(last<str.length)parts.push({t:'text',v:str.slice(last)});
+  return parts.map(p=>{
+    if(p.t==='url'){
+      const esc=p.v.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      return`<a href="${p.v}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--accent);text-decoration:underline;text-underline-offset:2px">${esc}</a>`;
+    }
+    return p.v.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }).join('');
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 function renderStep(g,s,isFirst,isLast,nextS,chainBroken=false){
   const lineClass=!nextS?'blocked':chainBroken?'blocked':spineLineClass(s.status,nextS.status);
   const tag=s.status==='active'?`<span class="tag tag-active">to do</span>`
@@ -794,7 +862,9 @@ function renderStep(g,s,isFirst,isLast,nextS,chainBroken=false){
       <div class="step-meta">
         ${tag}
         <span class="step-dur${s.dur?'':' placeholder'}" onclick="editDur(${g.id},${s.id})" title="Click to edit">${s.dur||'add time est.'}</span>
+        <span class="step-due${s.dueDate?'':' placeholder'}" onclick="editDueDate(${g.id},${s.id})" title="${s.dueDate?'Click to edit target date':'Click to set target date'}">${s.dueDate?formatDueDate(s.dueDate):'target date'}</span>
       </div>
+      <div id="sn-${g.id}-${s.id}" class="step-note${s.note?' has-note':''}" onclick="editStepNote(${g.id},${s.id})" title="${s.note?'Click to edit note':'Click to add a note'}">${s.note?linkify(s.note.replace(/\n/g,' ')):'+ note'}</div>
       <div class="step-actions">
         ${pill('+ before',`insertStepInline(${g.id},${s.id},true)`)}
         ${pill('+ after',`insertStepInline(${g.id},${s.id})`)}
@@ -838,7 +908,8 @@ function renderGoal(g,idx,activeGoals){
       ${ring(p,gs)}
       <div class="goal-meta">
         <div class="goal-name"><span class="goal-name-view" onclick="event.stopPropagation();editGoalName(${g.id})" title="Click to rename">${g.name}</span></div>
-        <div class="goal-sub">${done} of ${g.steps.length} steps complete${rem?` · ${rem} remaining`:''}</div>
+        <div class="goal-sub">${done} of ${g.steps.length} steps complete${rem?` · ${rem} remaining`:''}${g.dueDate?` · <span class="goal-due-badge" onclick="event.stopPropagation();editGoalDate(${g.id})" title="Click to edit target date">Due ${formatDueDate(g.dueDate)}</span>`:''}</div>
+        <div id="gn-${g.id}" class="goal-note${g.note?' has-note':''}" onclick="event.stopPropagation();editGoalNote(${g.id})" title="${g.note?'Click to edit note':'Click to add a note'}">${g.note?linkify(g.note):'+ note'}</div>
       </div>
       ${moveBtns}
       ${dupBtn}
@@ -972,6 +1043,8 @@ function doDuplicateGoal(id,withSteps){
     expanded:false,
     archived:false,
     archivedAt:null,
+    dueDate:g.dueDate||'',
+    note:g.note||'',
     steps:withSteps?g.steps.map(s=>({...s,id:sid++})):[],
   };
   const idx=goals.indexOf(g);
@@ -1017,6 +1090,8 @@ function openGoalMenu(id,btn,archived){
   const ICO_ARC   =`<svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="5.5" width="13" height="8" rx="1"/><polyline points="1,5.5 2.5,2 12.5,2 14,5.5"/><line x1="7.5" y1="7.5" x2="7.5" y2="11"/><polyline points="5.5,9.5 7.5,11 9.5,9.5"/></svg>`;
   const ICO_UNARC =`<svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="5.5" width="13" height="8" rx="1"/><polyline points="1,5.5 2.5,2 12.5,2 14,5.5"/><line x1="7.5" y1="11" x2="7.5" y2="7.5"/><polyline points="5.5,9 7.5,7.5 9.5,9"/></svg>`;
   const ICO_DEL   =`<svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,4 13,4"/><path d="M5.5 4V3a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v1"/><rect x="3" y="4" width="9" height="9.5" rx="1"/><line x1="6.5" y1="7" x2="6.5" y2="11"/><line x1="8.5" y1="7" x2="8.5" y2="11"/></svg>`;
+  const ICO_NOTE  =`<svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2h9v8.5l-2.5 2.5H3V2z"/><line x1="5.5" y1="5" x2="9.5" y2="5"/><line x1="5.5" y1="7.5" x2="7.5" y2="7.5"/></svg>`;
+  const ICO_CAL   =`<svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="1.5" y="2.5" width="12" height="11" rx="1"/><line x1="1.5" y1="6.5" x2="13.5" y2="6.5"/><line x1="4.5" y1="1" x2="4.5" y2="4"/><line x1="10.5" y1="1" x2="10.5" y2="4"/></svg>`;
   const sep=`<div style="height:0.5px;background:var(--border1);margin:3px 0"></div>`;
   let html='';
   if(!archived){
@@ -1026,6 +1101,9 @@ function openGoalMenu(id,btn,archived){
     html+=menuItem(ICO_DN,'Move down',`closeModal();moveGoal(${id},1)`,idx===active.length-1);
     html+=sep;
     html+=menuItem(ICO_PEN,'Rename',`closeModal();editGoalName(${id})`);
+    html+=menuItem(ICO_CAL,g.dueDate?'Edit target date':'Set target date',`closeModal();editGoalDate(${id})`);
+    if(g.dueDate)html+=menuItem(ICO_CAL,'Clear target date',`closeModal();clearGoalDate(${id})`);
+    html+=menuItem(ICO_NOTE,g.note?'Edit note':'Add note',`closeModal();editGoalNote(${id})`);
     html+=menuItem(ICO_COPY,'Duplicate',`closeModal();openDuplicateGoal(${id})`);
     html+=menuItem(ICO_ARC,'Archive',`closeModal();openArchiveGoal(${id})`);
     html+=sep;
@@ -1069,6 +1147,28 @@ function editTitle(gId,sId){
   inp.addEventListener('blur',commit);
   inp.addEventListener('keydown',e=>{if(e.key==='Enter')inp.blur();if(e.key==='Escape'){inp.value=s.title;inp.blur();}});
 }
+function formatDueDate(iso){
+  if(!iso)return'';
+  const d=new Date(iso+'T00:00:00');
+  const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const str=`${mo[d.getMonth()]} ${d.getDate()}`;
+  return d.getFullYear()===new Date().getFullYear()?str:`${str}, ${d.getFullYear()}`;
+}
+function editDueDate(gId,sId){
+  const g=goals.find(x=>x.id===gId),s=g.steps.find(x=>x.id===sId);
+  const el=document.querySelector(`#sr-${gId}-${sId} .step-due`);if(!el)return;
+  const inp=document.createElement('input');
+  inp.type='date';inp.className='step-due-input';inp.value=s.dueDate||'';
+  el.replaceWith(inp);inp.focus();
+  try{inp.showPicker();}catch(e){}
+  const commit=()=>{s.dueDate=inp.value||'';render();};
+  inp.addEventListener('change',commit);
+  inp.addEventListener('blur',commit);
+  inp.addEventListener('keydown',e=>{
+    if(e.key==='Escape')render();
+    if(e.key==='Enter')inp.blur();
+  });
+}
 function editDur(gId,sId){
   const g=goals.find(x=>x.id===gId),s=g.steps.find(x=>x.id===sId);
   const el=document.querySelector(`#sr-${gId}-${sId} .step-dur`);if(!el)return;
@@ -1077,13 +1177,72 @@ function editDur(gId,sId){
   inp.addEventListener('blur',()=>{const raw=inp.value.trim();s.dur=(raw&&parseDurToMins(raw)!==null)?normDur(raw):'';render();});
   inp.addEventListener('keydown',e=>{if(e.key==='Enter')inp.blur();if(e.key==='Escape')inp.blur();});
 }
+// ── Note modal (autosaves on any close) ───────────────────────────────────────
+let _noteSaveCb=null;
+function _commitNote(){
+  const ta=document.getElementById('note-modal-ta');
+  if(ta&&_noteSaveCb)_noteSaveCb(ta.value.trim());
+  _noteSaveCb=null;
+}
+function openNoteModal(label,current,onSave){
+  _noteSaveCb=onSave;
+  document.getElementById('modal-container').innerHTML=`
+  <div class="modal-bg" onclick="if(event.target===this){_commitNote();closeModal();}">
+    <div class="modal" style="width:440px;max-width:94vw">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.9rem">
+        <h3 style="margin:0;font-size:14px">${label}</h3>
+        <button onclick="_commitNote();closeModal()" style="background:none;border:none;cursor:pointer;color:var(--text3);padding:2px 4px;font-size:18px;line-height:1;border-radius:4px">✕</button>
+      </div>
+      <textarea id="note-modal-ta" style="width:100%;min-height:120px;max-height:340px;font-size:13px;font-family:var(--font);color:var(--text1);background:var(--bg2);border:0.5px solid var(--border3);border-radius:var(--radius-md);padding:9px 11px;resize:vertical;outline:none;line-height:1.65" placeholder="Add a note… URLs auto-link"></textarea>
+    </div>
+  </div>`;
+  const ta=document.getElementById('note-modal-ta');
+  ta.value=current||'';
+  ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);
+  const resize=()=>{ta.style.height='auto';ta.style.height=Math.min(ta.scrollHeight,340)+'px';};
+  resize();ta.addEventListener('input',resize);
+  ta.addEventListener('keydown',e=>{
+    if(e.key==='Escape'||((e.metaKey||e.ctrlKey)&&e.key==='Enter')){
+      e.preventDefault();_commitNote();closeModal();
+    }
+  });
+}
+// ─────────────────────────────────────────────────────────────────────────────
+function editStepNote(gId,sId){
+  const g=goals.find(x=>x.id===gId),s=g.steps.find(x=>x.id===sId);
+  openNoteModal('Step note',s.note||'',val=>{s.note=val;render();});
+}
+function editGoalDate(gId){
+  const g=goals.find(x=>x.id===gId);
+  document.getElementById('modal-container').innerHTML=`
+  <div class="modal-bg" onclick="if(event.target===this)closeModal()">
+    <div class="modal" style="width:280px;padding:1.25rem">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.85rem">
+        <h3 style="margin:0;font-size:14px">Target date</h3>
+        <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;color:var(--text3);padding:2px 4px;font-size:18px;line-height:1;border-radius:4px">✕</button>
+      </div>
+      <input type="date" id="goal-date-inp" style="width:100%;font-size:13px;font-family:var(--font);color:var(--text1);background:var(--bg2);border:0.5px solid var(--border3);border-radius:var(--radius-md);padding:7px 10px;outline:none;cursor:pointer">
+    </div>
+  </div>`;
+  const inp=document.getElementById('goal-date-inp');
+  inp.value=g.dueDate||'';inp.focus();
+  try{inp.showPicker();}catch(e){}
+  inp.addEventListener('change',()=>{g.dueDate=inp.value||'';closeModal();render();});
+  inp.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if(e.key==='Enter')inp.blur();});
+}
+function clearGoalDate(gId){const g=goals.find(x=>x.id===gId);g.dueDate='';render();}
+function editGoalNote(gId){
+  const g=goals.find(x=>x.id===gId);
+  openNoteModal('Goal note',g.note||'',val=>{g.note=val;render();});
+}
+
 function handleAdd(e,gId){
   if(e.type==='keydown'&&e.key!=='Enter')return;
   const inp=document.getElementById(`ai-${gId}`);
   const title=inp.value.trim();if(!title)return;
   const g=goals.find(x=>x.id===gId);
   if(GUEST_MODE&&g.steps.length>=DEMO_STEP_LIMIT){inp.value='';openDemoLimitModal('step');return;}
-  g.steps.push({id:sid++,title,status:'blocked',dur:'',wait:false});
+  g.steps.push({id:sid++,title,status:'blocked',dur:'',dueDate:'',wait:false,note:''});
   inp.value='';render();
   if(e.type==='keydown')setTimeout(()=>{const el=document.getElementById(`ai-${gId}`);if(el)el.focus();},30);
 }
@@ -1115,7 +1274,7 @@ function insertStepInline(gId,refSid,before=false){
   const g=goals.find(x=>x.id===gId);
   if(GUEST_MODE&&g.steps.length>=DEMO_STEP_LIMIT){openDemoLimitModal('step');return;}
   const idx=g.steps.findIndex(s=>s.id===refSid);
-  const newStep={id:sid++,title:'',status:'blocked',dur:'',wait:false};
+  const newStep={id:sid++,title:'',status:'blocked',dur:'',dueDate:'',wait:false,note:''};
   g.steps.splice(before?idx:idx+1,0,newStep);
   render();
   setTimeout(()=>editNewStepTitle(gId,newStep.id),20);
@@ -1148,7 +1307,7 @@ function openNewGoal(){
 }
 function doNewGoal(){
   const name=document.getElementById('ng-name').value.trim();if(!name)return;
-  goals.push({id:gid++,name,expanded:true,archived:false,archivedAt:null,steps:[]});
+  goals.push({id:gid++,name,expanded:true,archived:false,archivedAt:null,dueDate:'',steps:[],note:''});
   closeModal();render();
 }
 function closeModal(){document.getElementById('modal-container').innerHTML='';}
@@ -1324,9 +1483,9 @@ function openAccountModal(){
   const email=currentUser?.email||'';
   document.getElementById('modal-container').innerHTML=`
   <div class="modal-bg" style="align-items:flex-start;padding:5vh 1rem;overflow-y:auto" onclick="if(event.target===this)closeModal()">
-    <div class="modal" style="width:360px;margin:auto;padding:1.25rem">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem">
-        <h3 style="margin:0">Account</h3>
+    <div class="modal" style="width:325px;margin:auto;padding:1.1rem">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+        <h3 style="margin:0;font-size:14px">Account</h3>
         <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;color:var(--text3);padding:2px 4px;font-size:18px;line-height:1;border-radius:4px">✕</button>
       </div>
 
