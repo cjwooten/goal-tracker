@@ -1163,7 +1163,7 @@ function editDueDate(gId,sId){
   const inp=document.createElement('input');
   inp.type='date';inp.className='step-due-input';inp.value=s.dueDate||'';
   el.replaceWith(inp);inp.focus();
-  try{inp.showPicker();}catch(e){}
+  if(!/iPhone|iPad|iPod/i.test(navigator.userAgent)){try{inp.showPicker();}catch(e){}}
   const commit=()=>{s.dueDate=inp.value||'';render();};
   inp.addEventListener('change',commit);
   inp.addEventListener('blur',commit);
@@ -1202,6 +1202,8 @@ function openNoteModal(label,current,onSave){
   const ta=document.getElementById('note-modal-ta');
   ta.value=current||'';
   ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);
+  ta.addEventListener('touchstart',()=>{ta.style.fontSize='16px';},{passive:true});
+  ta.addEventListener('blur',()=>{ta.style.fontSize='';});
   const resize=()=>{ta.style.height='auto';ta.style.height=Math.min(ta.scrollHeight,340)+'px';};
   resize();ta.addEventListener('input',resize);
   ta.addEventListener('keydown',e=>{
@@ -1229,7 +1231,9 @@ function editGoalDate(gId){
   </div>`;
   const inp=document.getElementById('goal-date-inp');
   inp.value=g.dueDate||'';inp.focus();
-  try{inp.showPicker();}catch(e){}
+  inp.addEventListener('touchstart',()=>{inp.style.fontSize='16px';},{passive:true});
+  inp.addEventListener('blur',()=>{inp.style.fontSize='';});
+  if(!/iPhone|iPad|iPod/i.test(navigator.userAgent)){try{inp.showPicker();}catch(e){}}
   inp.addEventListener('change',()=>{g.dueDate=inp.value||'';closeModal();render();});
   inp.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if(e.key==='Enter')inp.blur();});
 }
