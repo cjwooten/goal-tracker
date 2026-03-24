@@ -1161,7 +1161,7 @@ function editDueDate(gId,sId){
   const g=goals.find(x=>x.id===gId),s=g.steps.find(x=>x.id===sId);
   const el=document.querySelector(`#sr-${gId}-${sId} .step-due`);if(!el)return;
   const inp=document.createElement('input');
-  inp.type='date';inp.className='step-due-input';inp.value=s.dueDate||'';
+  inp.type='date';inp.className='step-due-input';inp.style.fontSize='16px';inp.value=s.dueDate||'';
   el.replaceWith(inp);inp.focus();
   if(!/iPhone|iPad|iPod/i.test(navigator.userAgent)){try{inp.showPicker();}catch(e){}}
   const commit=()=>{s.dueDate=inp.value||'';render();};
@@ -1226,13 +1226,11 @@ function editGoalDate(gId){
         <h3 style="margin:0;font-size:14px">Target date</h3>
         <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;color:var(--text3);padding:2px 4px;font-size:18px;line-height:1;border-radius:4px">✕</button>
       </div>
-      <input type="date" id="goal-date-inp" style="width:100%;font-size:13px;font-family:var(--font);color:var(--text1);background:var(--bg2);border:0.5px solid var(--border3);border-radius:var(--radius-md);padding:7px 10px;outline:none;cursor:pointer">
+      <input type="date" id="goal-date-inp" style="width:100%;font-size:16px;font-family:var(--font);color:var(--text1);background:var(--bg2);border:0.5px solid var(--border3);border-radius:var(--radius-md);padding:7px 10px;outline:none;cursor:pointer">
     </div>
   </div>`;
   const inp=document.getElementById('goal-date-inp');
   inp.value=g.dueDate||'';inp.focus();
-  inp.addEventListener('touchstart',()=>{inp.style.fontSize='16px';},{passive:true});
-  inp.addEventListener('blur',()=>{inp.style.fontSize='';});
   if(!/iPhone|iPad|iPod/i.test(navigator.userAgent)){try{inp.showPicker();}catch(e){}}
   inp.addEventListener('change',()=>{g.dueDate=inp.value||'';closeModal();render();});
   inp.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if(e.key==='Enter')inp.blur();});
