@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Spine Goals · v3.8 · 2026-03-23 -->
+<!-- Spine Goals · v3.8.2 · 2026-03-24 · rich notes + live link + border fix -->
 <html lang="en">
 <head>
 <!-- Google tag (gtag.js) -->
@@ -33,6 +33,7 @@
     --radius-lg: 12px;
     --font:      -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     --logo-fill: #2E2E2B;
+    --accent:    #1D9E75;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -96,7 +97,7 @@
   .btn-new-goal { border-color: #1D9E75 !important; color: #1D9E75 !important; transition: background 0.15s, border-color 0.15s, color 0.15s; }
   .btn-new-goal:hover, .btn-new-goal:active { background: #1D9E75 !important; border-color: #1D9E75 !important; color: #fff !important; }
   .btn {
-    background: var(--bg); border: 0.5px solid var(--border2);
+    background: var(--bg); border: 1px solid var(--border2);
     border-radius: var(--radius-md); padding: 7px 16px;
     font-size: 13px; color: var(--text1); cursor: pointer;
     font-family: var(--font); transition: background 0.15s; white-space: nowrap;
@@ -108,7 +109,7 @@
   .goals-list { display: flex; flex-direction: column; gap: 10px; }
 
   .goal-card {
-    background: var(--bg); border: 0.5px solid var(--border1);
+    background: var(--bg); border: 1px solid var(--border1);
     border-radius: var(--radius-lg); overflow: hidden; transition: border-color 0.15s;
   }
   .goal-card.expanded { border-color: var(--border2); }
@@ -133,7 +134,7 @@
   .goal-due-add:hover { opacity: 1 !important; background: var(--bg2); }
   .goal-name-view { display: inline; cursor: text; border-radius: 3px; padding: 1px 3px; margin: -1px -3px; transition: background 0.12s; }
   .goal-name-view:hover { background: var(--bg2); }
-  .goal-name-input { font-size: 14px; font-weight: 500; font-family: var(--font); color: var(--text1); border: 0.5px solid var(--border3); border-radius: 4px; padding: 1px 4px; background: var(--bg); outline: none; width: 100%; }
+  .goal-name-input { font-size: 14px; font-weight: 500; font-family: var(--font); color: var(--text1); border: 1px solid var(--border3); border-radius: 4px; padding: 1px 4px; background: var(--bg); outline: none; width: 100%; }
 
   .status-badge { font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 500; flex-shrink: 0; }
   .s-active   { background: #fef3c7; color: #92400e; }
@@ -145,12 +146,12 @@
   .chevron { font-size: 10px; color: var(--text3); transition: transform 0.2s; flex-shrink: 0; }
   .expanded .chevron { transform: rotate(90deg); }
 
-  .goal-body { border-top: 0.5px solid var(--border1); }
+  .goal-body { border-top: 1px solid var(--border1); }
 
   .next-banner {
     display: flex; align-items: flex-start; gap: 10px;
     padding: 10px 16px; background: var(--bg2);
-    border-bottom: 0.5px solid var(--border1);
+    border-bottom: 1px solid var(--border1);
   }
   .next-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
   .next-label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 2px; }
@@ -213,34 +214,34 @@
   .step-title-view { font-size: 13px; color: var(--text1); line-height: 1.4; cursor: text; border-radius: 3px; padding: 1px 3px; margin-left: -3px; transition: background 0.12s; display: inline-block; max-width: 100%; }
   .step-title-view:hover { background: var(--bg2); }
   .step-title-view.muted { color: var(--text2); }
-  .step-title-input { font-size: 13px; font-family: var(--font); color: var(--text1); line-height: 1.4; border: 0.5px solid var(--border3); border-radius: 4px; padding: 1px 4px; background: var(--bg); outline: none; width: 100%; }
+  .step-title-input { font-size: 13px; font-family: var(--font); color: var(--text1); line-height: 1.4; border: 1px solid var(--border3); border-radius: 4px; padding: 1px 4px; background: var(--bg); outline: none; width: 100%; }
 
   .step-meta { display: flex; align-items: center; gap: 6px; margin-top: 3px; flex-wrap: wrap; }
   .step-dur {
     font-size: 11px; color: var(--text2); cursor: text;
     border-radius: 20px; padding: 2px 8px;
-    border: 0.5px solid var(--border2); background: var(--bg2);
+    border: 1px solid var(--border2); background: var(--bg2);
     display: inline-flex; align-items: center;
     transition: background 0.12s, border-color 0.12s;
   }
   .step-dur:hover { background: var(--bg3); border-color: var(--border3); }
   .step-dur.placeholder { color: var(--text3); font-style: italic; border-color: var(--border1); background: transparent; }
   .step-dur.placeholder:hover { background: var(--bg2); border-color: var(--border2); }
-  .step-dur-input { font-size: 11px; font-family: var(--font); color: var(--text2); border: 0.5px solid var(--border3); border-radius: 20px; padding: 2px 8px; background: var(--bg); outline: none; width: 110px; }
+  .step-dur-input { font-size: 11px; font-family: var(--font); color: var(--text2); border: 1px solid var(--border3); border-radius: 20px; padding: 2px 8px; background: var(--bg); outline: none; width: 110px; }
 
   .step-due {
     font-size: 11px; color: var(--text2); cursor: pointer;
     border-radius: 20px; padding: 2px 8px;
-    border: 0.5px solid var(--border2); background: var(--bg2);
+    border: 1px solid var(--border2); background: var(--bg2);
     display: inline-flex; align-items: center;
     transition: background 0.12s, border-color 0.12s, opacity 0.15s;
   }
   .step-due:hover { background: var(--bg3); border-color: var(--border3); }
   .step-due.placeholder { color: var(--text3); font-style: italic; border-color: var(--border1); background: transparent; opacity: 0.22; }
   .step-row:hover .step-due.placeholder { opacity: 1; }
-  .step-due-input { font-size: 11px; font-family: var(--font); color: var(--text2); border: 0.5px solid var(--border3); border-radius: 20px; padding: 2px 8px; background: var(--bg); outline: none; cursor: pointer; }
+  .step-due-input { font-size: 11px; font-family: var(--font); color: var(--text2); border: 1px solid var(--border3); border-radius: 20px; padding: 2px 8px; background: var(--bg); outline: none; cursor: pointer; }
 
-  .tag { font-size: 10px; padding: 2px 8px; border-radius: 20px; border: 0.5px solid; font-weight: 500; }
+  .tag { font-size: 10px; padding: 2px 8px; border-radius: 20px; border: 1px solid; font-weight: 500; }
   .tag-wait   { background: #dbeeff; color: #1d4ed8; border-color: #93c5fd; }
   .tag-active { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
   .tag-done   { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
@@ -278,17 +279,37 @@
   .goal-note:hover { background: var(--bg2); }
   .goal-note a { color: var(--accent); pointer-events: auto; }
 
+  /* ── Rich note editor (modal) ───────────────────────────────────────────── */
+  .note-editor {
+    width: 100%; min-height: 120px; max-height: 340px;
+    font-size: 13px; font-family: var(--font); color: var(--text1);
+    background: var(--bg2); border: 1px solid var(--border3);
+    border-radius: var(--radius-md); padding: 9px 11px;
+    outline: none; line-height: 1.65; overflow-y: auto;
+    cursor: text; word-wrap: break-word; white-space: pre-wrap;
+  }
+  .note-editor:focus { border-color: var(--accent); }
+  .note-editor b { font-weight: 600; }
+  .note-editor i { font-style: italic; }
+  .note-editor a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; cursor: default; }
+  .note-editor a:hover { opacity: 0.75; }
+  .note-editor.is-empty::before {
+    content: attr(data-placeholder); color: var(--text3); pointer-events: none;
+  }
+  .note-hint { font-size: 10.5px; color: var(--text3); margin-top: 6px; text-align: right; line-height: 1.4; }
+  .note-hint b { font-weight: 500; color: var(--text2); }
+
   .add-row { padding: 4px 16px 12px; }
-  .add-input { width: 100%; border: 0.5px solid var(--border2); border-radius: var(--radius-md); padding: 8px 12px; font-size: 12px; font-family: var(--font); color: var(--text1); background: var(--bg2); outline: none; }
+  .add-input { width: 100%; border: 1px solid var(--border2); border-radius: var(--radius-md); padding: 8px 12px; font-size: 12px; font-family: var(--font); color: var(--text1); background: var(--bg2); outline: none; }
   .add-input:focus { border-color: var(--border3); background: var(--bg); }
   .add-input::placeholder { color: var(--text3); }
 
   .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; z-index: 50; }
-  .modal { background: var(--bg); border: 0.5px solid var(--border2); border-radius: var(--radius-lg); padding: 1.5rem; width: 340px; max-width: 92vw; }
+  .modal { background: var(--bg); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 1.5rem; width: 340px; max-width: 92vw; }
   .modal h3 { font-size: 15px; font-weight: 500; margin-bottom: 1rem; }
   .field { margin-bottom: 10px; }
   .field label { font-size: 11px; color: var(--text2); display: block; margin-bottom: 3px; }
-  .field input, .field select { width: 100%; border: 0.5px solid var(--border2); border-radius: var(--radius-md); padding: 8px 10px; font-size: 13px; font-family: var(--font); color: var(--text1); background: var(--bg2); outline: none; appearance: none; }
+  .field input, .field select { width: 100%; border: 1px solid var(--border2); border-radius: var(--radius-md); padding: 8px 10px; font-size: 13px; font-family: var(--font); color: var(--text1); background: var(--bg2); outline: none; appearance: none; }
   .field input:focus, .field select:focus { border-color: var(--border3); background: var(--bg); }
   .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1rem; }
 
@@ -349,9 +370,10 @@
   .btn-menu {
     width:34px; height:34px; padding:0; display:flex; align-items:center; justify-content:center;
     border-radius:var(--radius-md); color:var(--text2); flex-shrink:0;
-    transition:background 0.15s, color 0.15s;
+    transition:color 0.15s;
+    border-color:transparent !important; background:transparent !important;
   }
-  .btn-menu:hover { background:var(--bg3) !important; color:var(--text1) !important; border-color:transparent !important; }
+  .btn-menu:hover { color:var(--text1) !important; }
 
   /* ── Side menu panel ── */
   .menu-overlay {
@@ -361,13 +383,13 @@
   .menu-overlay.open { background:rgba(0,0,0,0.35); pointer-events:auto; }
   .menu-panel {
     position:fixed; top:0; right:0; bottom:0; width:300px; max-width:90vw;
-    background:var(--bg); border-left:0.5px solid var(--border2);
+    background:var(--bg); border-left:1px solid var(--border2);
     transform:translateX(100%); transition:transform 0.28s cubic-bezier(0.4,0,0.2,1);
     z-index:101; display:flex; flex-direction:column; overflow-y:auto;
   }
   .menu-panel.open { transform:translateX(0); }
   .menu-panel-head {
-    padding:20px 18px 16px; border-bottom:0.5px solid var(--border1);
+    padding:20px 18px 16px; border-bottom:1px solid var(--border1);
     display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
   }
   .menu-close {
@@ -376,7 +398,7 @@
     font-size:17px; line-height:1; transition:background 0.12s, color 0.12s; margin-top:2px;
   }
   .menu-close:hover { background:var(--bg3); color:var(--text1); }
-  .menu-section { padding:10px 18px; border-bottom:0.5px solid var(--border1); }
+  .menu-section { padding:10px 18px; border-bottom:1px solid var(--border1); }
   .menu-section-label {
     font-size:10px; font-weight:600; color:var(--text3); text-transform:uppercase;
     letter-spacing:0.09em; margin-bottom:4px; padding:0 10px;
@@ -393,12 +415,12 @@
   .menu-item-icon { width:16px; flex-shrink:0; display:flex; align-items:center; justify-content:center; opacity:0.55; }
   .menu-item-badge {
     margin-left:auto; font-size:10px; font-weight:600; letter-spacing:0.04em;
-    color:var(--text3); background:var(--bg2); border:0.5px solid var(--border2);
+    color:var(--text3); background:var(--bg2); border:1px solid var(--border2);
     border-radius:20px; padding:2px 7px; white-space:nowrap;
   }
-  .menu-footer { padding:14px 18px; margin-top:auto; border-top:0.5px solid var(--border1); }
+  .menu-footer { padding:14px 18px; margin-top:auto; border-top:1px solid var(--border1); }
   .theme-toggle {
-    display:flex; background:var(--bg2); border:0.5px solid var(--border2);
+    display:flex; background:var(--bg2); border:1px solid var(--border2);
     border-radius:20px; padding:2px; gap:2px;
   }
   .theme-opt {
@@ -439,8 +461,8 @@
     </svg>
     <div style="display:flex;gap:10px;align-items:center">
       <div id="save-status" class="save-status" aria-live="polite"></div>
-      <button class="btn btn-new-goal" onclick="openNewGoal()" style="font-size:12px;padding:5px 14px">+ New goal</button>
-      <button class="btn btn-menu" onclick="openMenu()" title="Menu" aria-label="Open menu">
+      <button class="btn btn-new-goal" onclick="openNewGoal()" style="font-size:12px;padding:5px 14px">New goal <span style="opacity:0.5;font-size:10px;font-weight:400;letter-spacing:0.02em">(G)</span></button>
+      <button class="btn btn-menu" onclick="openMenu()" title="Menu" aria-label="Open menu" style="margin-left:-6px">
         <svg width="15" height="12" viewBox="0 0 15 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
           <line x1="0" y1="1" x2="15" y2="1"/><line x1="0" y1="6" x2="15" y2="6"/><line x1="0" y1="11" x2="15" y2="11"/>
         </svg>
@@ -478,12 +500,14 @@ const DEFAULT_DATA={
     {
       // Open goal — expanded, showcases all four step statuses
       id:1, name:'Run my first 5K', expanded:true, archived:false, archivedAt:null,
+      dueDate:'2026-06-14',
+      note:'Training for the spring race season',
       steps:[
-        {id:1,  title:'Sign up for a local race',            status:'done',    dur:'10 min', wait:false},
+        {id:1,  title:'Sign up for a local race',            status:'done',    dur:'10 min', wait:false, note:'parkrun.com'},
         {id:2,  title:'Get a pair of running shoes',         status:'done',    dur:'1 hr',   wait:false},
-        {id:3,  title:'Start a training plan',               status:'active',  dur:'8 wks',  wait:false},
+        {id:3,  title:'Start a training plan',               status:'active',  dur:'8 wks',  wait:false, dueDate:'2026-03-30'},
         {id:4,  title:'Find someone to run with',            status:'waiting', dur:'',       wait:true},
-        {id:5,  title:'Race day',                            status:'blocked', dur:'',       wait:false},
+        {id:5,  title:'Race day',                            status:'blocked', dur:'',       wait:false, dueDate:'2026-06-14'},
       ]
     },
     {
@@ -492,7 +516,7 @@ const DEFAULT_DATA={
       steps:[
         {id:6,  title:'Pick a colour palette',               status:'done',    dur:'1 hr',   wait:false},
         {id:7,  title:'Clear out and donate old things',     status:'done',    dur:'3 hrs',  wait:false},
-        {id:8,  title:'Paint the walls',                     status:'active',  dur:'1 day',  wait:false},
+        {id:8,  title:'Paint the walls',                     status:'active',  dur:'1 day',  wait:false, note:'Going with warm white throughout'},
         {id:9,  title:'Wait for furniture delivery',         status:'waiting', dur:'',       wait:true},
         {id:10, title:'Assemble and arrange furniture',      status:'blocked', dur:'2 hrs',  wait:false},
         {id:11, title:'Style and finishing touches',         status:'blocked', dur:'2 hrs',  wait:false},
@@ -544,7 +568,7 @@ function openSaveErrorModal(){
         <h3 style="margin:0">Your data couldn't be saved</h3>
       </div>
       <p style="font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:0.75rem">
-        Something interrupted the save — this usually means one of the following:
+        Something interrupted the save. This usually means one of the following:
       </p>
       <ul style="font-size:13px;color:var(--text2);line-height:1.8;margin:0 0 0.75rem 1.1rem;padding:0">
         <li><strong style="color:var(--text1)">You're offline</strong> — your internet connection dropped. Your changes are still in memory but won't survive a page refresh until the connection is restored.</li>
@@ -552,7 +576,7 @@ function openSaveErrorModal(){
         <li style="margin-top:6px"><strong style="color:var(--text1)">Session expired</strong> — if you're signed in, your session may have timed out. Try refreshing the page and signing back in.</li>
       </ul>
       <p style="font-size:12px;color:var(--text3);line-height:1.6;margin-bottom:0.75rem">If this just appeared, waiting a minute and trying again may be all it takes.</p>
-      <div style="border:0.5px solid var(--border1);border-radius:var(--radius-md);padding:12px 14px;margin-bottom:1.25rem;background:var(--bg2)">
+      <div style="border:1px solid var(--border1);border-radius:var(--radius-md);padding:12px 14px;margin-bottom:1.25rem;background:var(--bg2)">
         <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.05em">Recommended action</div>
         <p style="font-size:13px;color:var(--text2);line-height:1.6;margin:0">Export your data now to avoid losing any changes. You can re-import it once the issue is resolved.</p>
       </div>
@@ -577,7 +601,7 @@ function openSavedModal(){
         Everything you add or change is saved automatically as you work.
       </p>
       <p style="font-size:13px;line-height:1.65;color:var(--text2);margin-bottom:10px">
-        Once you're signed in, your goals sync across all your logged-in devices — so you can plan on one device and pick up on another.
+        Once you're signed in, your goals sync across all your logged-in devices, so you can plan on one device and pick up on another.
       </p>
       <p style="font-size:13px;line-height:1.65;color:var(--text2);margin-bottom:1.25rem">
         Your data is stored securely and used only to provide this service. We don't sell or share it with anyone.
@@ -599,7 +623,7 @@ function openGuestModal(){
         <h3 style="margin:0">You're in demo mode</h3>
       </div>
       <p style="font-size:13px;line-height:1.65;color:var(--text2);margin-bottom:10px">
-        You can explore and try everything — but your changes are only saved to this browser session and won't follow you across devices.
+        You can explore and try everything, but your changes are only saved to this browser session and won't follow you across devices.
       </p>
       <p style="font-size:13px;line-height:1.65;color:var(--text2);margin-bottom:1.25rem">
         Create a free account to save your goals properly and access them anywhere.
@@ -659,7 +683,7 @@ async function load(){
     // Signed-in: load from Supabase
     const {data,error}=await _supabase.from('goals').select('data').eq('user_id',currentUser.id).maybeSingle();
     if(error||!data){
-      // New user — load sample data and show welcome
+      // New user, load sample data and show welcome
       goals=DEFAULT_DATA.goals;gid=DEFAULT_DATA.gid;sid=DEFAULT_DATA.sid;showWelcome=true;
       return;
     }
@@ -680,7 +704,7 @@ let goals=[];
 function pill(label, onclick) {
   return `<span onclick="${onclick}" style="
     display:inline-block;font-size:10px;font-family:var(--font);color:var(--text2);
-    background:none;border:0.5px solid var(--border2);border-radius:20px;
+    background:none;border:1px solid var(--border2);border-radius:20px;
     padding:1px 7px 2px;line-height:1.5;cursor:pointer;white-space:nowrap;
     user-select:none;transition:background 0.12s;
   " onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='none'">${label}</span>`;
@@ -822,24 +846,159 @@ function renderSpineOnly(g){
   </div>`;
 }
 
-// ── URL linkifier ─────────────────────────────────────────────────────────────
-function linkify(str){
-  const parts=[];let last=0;
-  const re=/(https?:\/\/[^\s<>"']+[^\s<>"'.,!?;:])/g;
-  let m;
-  while((m=re.exec(str))!==null){
-    if(m.index>last)parts.push({t:'text',v:str.slice(last,m.index)});
+// ── Note helpers ──────────────────────────────────────────────────────────────
+function _esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// Curated TLD list for bare-domain detection (covers the vast majority of real links)
+const _NOTE_TLDS='com|org|net|edu|gov|io|co|app|dev|ai|uk|ca|au|de|fr|it|es|jp|cn|in|br|mx|nl|se|no|dk|fi|ch|at|be|nz|sg|hk|kr|ru|info|biz|online|store|shop|site|web|tech|me|tv|us|ly|gg|fm';
+const _URL_RE=new RegExp(
+  '(?<![/@\\w])' +                                                    // not part of email/path
+  '(?:https?:\\/\\/[^\\s<>"\']+[^\\s<>"\'.,!?;:]' +                  // full https?:// URL
+  '|(?:www\\.)[a-zA-Z0-9][a-zA-Z0-9.\\-]*(?:\\/[^\\s<>"\']*[^\\s<>"\'.,!?;:])?' + // www.
+  '|[a-zA-Z0-9][a-zA-Z0-9.\\-]*\\.(?:'+_NOTE_TLDS+')(?:\\/[^\\s<>"\']*[^\\s<>"\'.,!?;:])?' + // bare domain.tld
+  ')','gi');
+
+// Auto-link plain text — used for inline display of old plain-text notes
+function _linkifyPlain(text){
+  const re=new RegExp(_URL_RE.source,'gi');
+  const parts=[];let last=0,m;
+  while((m=re.exec(text))!==null){
+    if(m.index>last)parts.push({t:'text',v:text.slice(last,m.index)});
     parts.push({t:'url',v:m[0]});
     last=m.index+m[0].length;
   }
-  if(last<str.length)parts.push({t:'text',v:str.slice(last)});
+  if(last<text.length)parts.push({t:'text',v:text.slice(last)});
   return parts.map(p=>{
     if(p.t==='url'){
-      const esc=p.v.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-      return`<a href="${p.v}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--accent);text-decoration:underline;text-underline-offset:2px">${esc}</a>`;
+      const href=/^https?:\/\//i.test(p.v)?p.v:'https://'+p.v;
+      return`<a href="${_esc(href)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${_esc(p.v)}</a>`;
     }
-    return p.v.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    return _esc(p.v);
   }).join('');
+}
+
+// Sanitize HTML to only b/i/br/a tags — runs on contenteditable innerHTML before saving
+function sanitizeNote(html){
+  const d=document.createElement('div');
+  d.innerHTML=html;
+  let firstDiv=true;
+  function walk(node){
+    Array.from(node.childNodes).forEach(c=>{
+      if(c.nodeType===3)return;
+      if(c.nodeType!==1){c.remove();return;}
+      const tag=c.tagName.toLowerCase();
+      if(tag==='b'||tag==='strong'){
+        const nb=document.createElement('b');
+        Array.from(c.childNodes).forEach(x=>nb.appendChild(x));
+        c.replaceWith(nb);walk(nb);
+      } else if(tag==='i'||tag==='em'){
+        const ni=document.createElement('i');
+        Array.from(c.childNodes).forEach(x=>ni.appendChild(x));
+        c.replaceWith(ni);walk(ni);
+      } else if(tag==='br'){
+        /* keep */
+      } else if(tag==='a'){
+        const raw=(c.getAttribute('href')||'').trim();
+        const href=/^https?:\/\//i.test(raw)?raw:/^[a-zA-Z0-9]/.test(raw)?'https://'+raw:'';
+        if(href&&!/^javascript:/i.test(href)){
+          const na=document.createElement('a');
+          na.href=href;na.target='_blank';na.rel='noopener';
+          Array.from(c.childNodes).forEach(x=>na.appendChild(x));
+          c.replaceWith(na);walk(na);
+        } else {
+          const f=document.createDocumentFragment();
+          Array.from(c.childNodes).forEach(x=>f.appendChild(x));
+          c.replaceWith(f);
+        }
+      } else if(tag==='div'){
+        // contenteditable wraps lines in <div>; treat each as a paragraph break
+        const f=document.createDocumentFragment();
+        if(!firstDiv)f.appendChild(document.createElement('br'));
+        firstDiv=false;
+        Array.from(c.childNodes).forEach(x=>f.appendChild(x));
+        c.replaceWith(f);walk(f);
+      } else {
+        // unwrap unknown tags, keep children
+        const f=document.createDocumentFragment();
+        Array.from(c.childNodes).forEach(x=>f.appendChild(x));
+        c.replaceWith(f);walk(f);
+      }
+    });
+  }
+  walk(d);
+  return d.innerHTML.replace(/^(<br\s*\/?>\s*)+/i,'').replace(/(\s*<br\s*\/?>)+$/i,'');
+}
+
+// Walk text nodes in HTML, auto-link bare URLs (skips existing <a> nodes)
+function autolinkNote(html){
+  const d=document.createElement('div');
+  d.innerHTML=html;
+  function walk(node){
+    if(node.nodeType===3){
+      const re=new RegExp(_URL_RE.source,'gi');
+      if(!re.test(node.textContent))return;
+      re.lastIndex=0;
+      const s=document.createElement('span');
+      s.innerHTML=_linkifyPlain(node.textContent);
+      node.replaceWith(...s.childNodes);
+    } else if(node.nodeType===1){
+      if(node.tagName.toLowerCase()==='a')return; // don't re-link inside links
+      Array.from(node.childNodes).forEach(walk);
+    }
+  }
+  Array.from(d.childNodes).forEach(walk);
+  return d.innerHTML;
+}
+
+// Live link: check word before cursor on Space/Enter/comma and auto-convert to <a>
+function _tryLinkifyAtCursor(ce){
+  const sel=window.getSelection();
+  if(!sel||!sel.rangeCount)return;
+  const range=sel.getRangeAt(0);
+  if(!range.collapsed)return;
+  const node=range.startContainer;
+  if(node.nodeType!==3)return; // text nodes only
+  // Don't linkify if cursor is already inside a link
+  let p=node.parentElement;
+  while(p&&p!==ce){if(p.tagName==='A')return;p=p.parentElement;}
+  const cursor=range.startOffset;
+  const before=node.textContent.slice(0,cursor);
+  const m=before.match(/(\S+)$/);
+  if(!m)return;
+  const word=m[1];
+  const wordStart=cursor-word.length;
+  const re=new RegExp(
+    '^(?:https?:\\/\\/[^\\s<>"\']+'+
+    '|(?:www\\.)[a-zA-Z0-9][a-zA-Z0-9.\\-]*'+
+    '|[a-zA-Z0-9][a-zA-Z0-9.\\-]*\\.(?:'+_NOTE_TLDS+'))(?:\\/\\S*)?$','i');
+  if(!re.test(word))return;
+  const href=/^https?:\/\//i.test(word)?word:'https://'+word;
+  // Rebuild nodes: [before text] [<a>] [after text]
+  const beforeNode=document.createTextNode(node.textContent.slice(0,wordStart));
+  const afterNode=document.createTextNode(node.textContent.slice(cursor));
+  const a=document.createElement('a');
+  a.href=href;a.target='_blank';a.rel='noopener';a.textContent=word;
+  const parent=node.parentNode;
+  parent.replaceChild(afterNode,node);
+  parent.insertBefore(a,afterNode);
+  parent.insertBefore(beforeNode,a);
+  // Move cursor to start of afterNode so the trigger character (space/enter) inserts after the link
+  const nr=document.createRange();
+  nr.setStart(afterNode,0);nr.collapse(true);
+  sel.removeAllRanges();sel.addRange(nr);
+}
+
+// Render a note for inline display in the list (handles both legacy plain text and new HTML)
+function renderNote(str,stripBr=false){
+  if(!str)return'';
+  let html;
+  if(/<(?:b|i|a|br)[\s>\/]/i.test(str)){
+    html=sanitizeNote(str); // already formatted HTML — sanitize for safety
+  } else {
+    html=_linkifyPlain(str); // legacy plain text
+  }
+  if(stripBr)html=html.replace(/<br\s*\/?>/gi,' ');
+  return html;
 }
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -865,9 +1024,9 @@ function renderStep(g,s,isFirst,isLast,nextS,chainBroken=false){
       <div class="step-meta">
         ${tag}
         <span class="step-dur${s.dur?'':' placeholder'}" onclick="editDur(${g.id},${s.id})" title="Click to edit">${s.dur||'add time est.'}</span>
-        <span class="step-due${s.dueDate?'':' placeholder'}" onclick="editDueDate(${g.id},${s.id})" title="${s.dueDate?'Click to edit target date':'Click to set target date'}">${s.dueDate?formatDueDate(s.dueDate):'target date'}</span>
+        <span class="step-due${s.dueDate?'':' placeholder'}" onclick="editDueDate(${g.id},${s.id})" title="${s.dueDate?'Click to edit target date':'Click to set target date'}">${s.dueDate?formatDueDate(s.dueDate):'add target date'}</span>
       </div>
-      <div id="sn-${g.id}-${s.id}" class="step-note${s.note?' has-note':''}" onclick="editStepNote(${g.id},${s.id})" title="${s.note?'Click to edit note':'Click to add a note'}">${s.note?linkify(s.note.replace(/\n/g,' ')):'+ note'}</div>
+      <div id="sn-${g.id}-${s.id}" class="step-note${s.note?' has-note':''}" onclick="editStepNote(${g.id},${s.id})" title="${s.note?'Click to edit note':'Click to add a note'}">${s.note?renderNote(s.note,true):'+ note'}</div>
       <div class="step-actions">
         ${pill('+ before',`insertStepInline(${g.id},${s.id},true)`)}
         ${pill('+ after',`insertStepInline(${g.id},${s.id})`)}
@@ -912,7 +1071,7 @@ function renderGoal(g,idx,activeGoals){
       <div class="goal-meta">
         <div class="goal-name"><span class="goal-name-view" onclick="event.stopPropagation();editGoalName(${g.id})" title="Click to rename">${g.name}</span></div>
         <div class="goal-sub">${done} of ${g.steps.length} steps complete${rem?` · ${rem} remaining`:''}${g.dueDate?` · <span class="goal-due-badge" onclick="event.stopPropagation();editGoalDate(${g.id})" title="Click to edit target date"><i>target:</i> ${formatDueDate(g.dueDate)}</span>`:`<span class="goal-due-add" onclick="event.stopPropagation();editGoalDate(${g.id})" title="Set target date"> · target date</span>`}</div>
-        <div id="gn-${g.id}" class="goal-note${g.note?' has-note':''}" onclick="event.stopPropagation();editGoalNote(${g.id})" title="${g.note?'Click to edit note':'Click to add a note'}">${g.note?linkify(g.note):'+ note'}</div>
+        <div id="gn-${g.id}" class="goal-note${g.note?' has-note':''}" onclick="event.stopPropagation();editGoalNote(${g.id})" title="${g.note?'Click to edit note':'Click to add a note'}">${g.note?renderNote(g.note,true):'+ note'}</div>
       </div>
       ${moveBtns}
       ${dupBtn}
@@ -1121,7 +1280,7 @@ function openGoalMenu(id,btn,archived){
   const top=window.innerHeight-rect.bottom>estH?Math.round(rect.bottom+6):Math.round(rect.top-estH-6);
   document.getElementById('modal-container').innerHTML=`
     <div style="position:fixed;inset:0;z-index:50" onclick="closeModal()">
-      <div style="position:fixed;top:${top}px;right:${right}px;background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius-lg);padding:4px;min-width:185px;box-shadow:0 6px 28px rgba(0,0,0,0.16);z-index:51" onclick="event.stopPropagation()">
+      <div style="position:fixed;top:${top}px;right:${right}px;background:var(--bg);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:4px;min-width:185px;box-shadow:0 6px 28px rgba(0,0,0,0.16);z-index:51" onclick="event.stopPropagation()">
         ${html}
       </div>
     </div>`;
@@ -1185,15 +1344,30 @@ function editDur(gId,sId){
   inp.addEventListener('blur',()=>{const raw=inp.value.trim();s.dur=(raw&&parseDurToMins(raw)!==null)?normDur(raw):'';render();});
   inp.addEventListener('keydown',e=>{if(e.key==='Enter')inp.blur();if(e.key==='Escape')inp.blur();});
 }
-// ── Note modal (autosaves on any close) ───────────────────────────────────────
+// ── Note modal — rich editor (bold, italic, links) · autosaves on close ───────
 let _noteSaveCb=null;
+
 function _commitNote(){
-  const ta=document.getElementById('note-modal-ta');
-  if(ta&&_noteSaveCb)_noteSaveCb(ta.value.trim());
+  const ce=document.getElementById('note-modal-ce');
+  if(ce&&_noteSaveCb){
+    const linked=autolinkNote(ce.innerHTML);
+    const clean=sanitizeNote(linked);
+    _noteSaveCb(clean==='<br>'||clean==='&nbsp;'?'':clean);
+  }
   _noteSaveCb=null;
 }
+
+function _noteUpdateEmpty(ce){
+  const empty=!ce.textContent.trim()&&!ce.querySelector('img,br+br');
+  ce.classList.toggle('is-empty',empty);
+}
+
 function openNoteModal(label,current,onSave){
   _noteSaveCb=onSave;
+  const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const hint=isMobile
+    ?'Tip: select text then use the format menu'
+    :'<b>⌘B</b> bold &nbsp;·&nbsp; <b>⌘I</b> italic &nbsp;·&nbsp; <b>⌘+click</b> to open links &nbsp;·&nbsp; <b>⌘↵</b> save';
   document.getElementById('modal-container').innerHTML=`
   <div class="modal-bg" onclick="if(event.target===this){_commitNote();closeModal();}">
     <div class="modal" style="width:440px;max-width:94vw">
@@ -1201,19 +1375,69 @@ function openNoteModal(label,current,onSave){
         <h3 style="margin:0;font-size:14px">${label}</h3>
         <button onclick="_commitNote();closeModal()" style="background:none;border:none;cursor:pointer;color:var(--text3);padding:2px 4px;font-size:18px;line-height:1;border-radius:4px">✕</button>
       </div>
-      <textarea id="note-modal-ta" style="width:100%;min-height:120px;max-height:340px;font-size:13px;font-family:var(--font);color:var(--text1);background:var(--bg2);border:0.5px solid var(--border3);border-radius:var(--radius-md);padding:9px 11px;resize:vertical;outline:none;line-height:1.65" placeholder="Add a note… URLs auto-link"></textarea>
+      <div id="note-modal-ce" class="note-editor${current?'':' is-empty'}" contenteditable="true" data-placeholder="Add a note…"></div>
+      <div class="note-hint">${hint}</div>
     </div>
   </div>`;
-  const ta=document.getElementById('note-modal-ta');
-  ta.value=current||'';
-  if(/iPhone|iPad|iPod/i.test(navigator.userAgent))ta.style.fontSize='16px';
-  ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);;
-  const resize=()=>{ta.style.height='auto';ta.style.height=Math.min(ta.scrollHeight,340)+'px';};
-  resize();ta.addEventListener('input',resize);
-  ta.addEventListener('keydown',e=>{
-    if(e.key==='Escape'||((e.metaKey||e.ctrlKey)&&e.key==='Enter')){
-      e.preventDefault();_commitNote();closeModal();
+
+  const ce=document.getElementById('note-modal-ce');
+
+  // Load existing content
+  if(current){
+    if(/<(?:b|i|a|br)[\s>\/]/i.test(current)){
+      ce.innerHTML=sanitizeNote(current);
+    } else {
+      ce.textContent=current; // legacy plain text — safe as textContent
     }
+  }
+
+  if(isMobile)ce.style.fontSize='16px';
+
+  // Prefer <br> over <div> for newlines
+  try{document.execCommand('defaultParagraphSeparator',false,'br');}catch(e){}
+
+  // Move cursor to end
+  ce.focus();
+  try{
+    const range=document.createRange(),sel=window.getSelection();
+    range.selectNodeContents(ce);range.collapse(false);
+    sel.removeAllRanges();sel.addRange(range);
+  }catch(e){}
+
+  ce.addEventListener('input',()=>_noteUpdateEmpty(ce));
+
+  ce.addEventListener('keydown',e=>{
+    // Save shortcuts
+    if(e.key==='Escape'||((e.metaKey||e.ctrlKey)&&e.key==='Enter')){
+      e.preventDefault();_commitNote();closeModal();return;
+    }
+    // Bold: ⌘B / Ctrl+B
+    if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='b'){
+      e.preventDefault();document.execCommand('bold',false,null);return;
+    }
+    // Italic: ⌘I / Ctrl+I
+    if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='i'){
+      e.preventDefault();document.execCommand('italic',false,null);return;
+    }
+    // Live URL detection — convert bare URL to link on space, enter, or comma
+    if(e.key===' '||e.key==='Enter'||e.key===','){
+      _tryLinkifyAtCursor(ce);
+    }
+  });
+
+  // ⌘+click / Ctrl+click to follow links inside the editor
+  ce.addEventListener('click',e=>{
+    if(e.target.tagName==='A'&&(e.metaKey||e.ctrlKey)){
+      e.preventDefault();
+      window.open(e.target.href,'_blank','noopener,noreferrer');
+    }
+  });
+
+  // Strip rich formatting on paste — keep plain text only
+  ce.addEventListener('paste',e=>{
+    e.preventDefault();
+    const text=(e.clipboardData||window.clipboardData).getData('text/plain');
+    document.execCommand('insertText',false,text);
   });
 }
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1230,7 +1454,7 @@ function editGoalDate(gId){
         <h3 style="margin:0;font-size:14px">Target date</h3>
         <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;color:var(--text3);padding:2px 4px;font-size:18px;line-height:1;border-radius:4px">✕</button>
       </div>
-      <input type="date" id="goal-date-inp" style="width:100%;font-size:13px;font-family:var(--font);color:var(--text1);background:var(--bg2);border:0.5px solid var(--border3);border-radius:var(--radius-md);padding:7px 10px;outline:none;cursor:pointer">
+      <input type="date" id="goal-date-inp" style="width:100%;font-size:13px;font-family:var(--font);color:var(--text1);background:var(--bg2);border:1px solid var(--border3);border-radius:var(--radius-md);padding:7px 10px;outline:none;cursor:pointer">
     </div>
   </div>`;
   const iosDate=/iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -1326,6 +1550,18 @@ function doNewGoal(){
 }
 function closeModal(){document.getElementById('modal-container').innerHTML='';}
 
+// ── Global keyboard shortcuts ─────────────────────────────────────────────────
+document.addEventListener('keydown',e=>{
+  // G — new goal (skip when typing in any input, textarea, or contenteditable)
+  if(e.key.toLowerCase()==='g'&&!e.metaKey&&!e.ctrlKey&&!e.altKey){
+    const t=document.activeElement;
+    if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable))return;
+    if(document.getElementById('modal-container').children.length)return;
+    e.preventDefault();
+    openNewGoal();
+  }
+});
+
 function openArchiveGoal(id){
   const g=goals.find(x=>x.id===id);if(!g)return;
   document.getElementById('modal-container').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeModal()">
@@ -1379,14 +1615,14 @@ function openDataModal(){
     <div class="modal">
       <h3>Import / Export</h3>
       <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:1rem">
-        <div style="border:0.5px solid var(--border2);border-radius:var(--radius-md);padding:14px">
+        <div style="border:1px solid var(--border2);border-radius:var(--radius-md);padding:14px">
           <div style="font-size:13px;font-weight:500;color:var(--text1);margin-bottom:4px">Export</div>
           <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px">Saves all your goals to a file on your device. Use this to back up your data or move it to another device.</div>
           <button class="btn" onclick="closeModal();exportData()" style="font-size:12px">Download backup file</button>
         </div>
-        <div style="border:0.5px solid var(--border2);border-radius:var(--radius-md);padding:14px">
+        <div style="border:1px solid var(--border2);border-radius:var(--radius-md);padding:14px">
           <div style="font-size:13px;font-weight:500;color:var(--text1);margin-bottom:4px">Import</div>
-          <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px">Loads goals from a backup file. <strong style="color:#dc2626">This replaces everything currently in your tracker.</strong> Only Goal Tracker export files (.json) are supported — other files won't work.</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px">Loads goals from a backup file. <strong style="color:#dc2626">This replaces everything currently in your tracker.</strong> Only Goal Tracker export files (.json) are supported. Other files won't work.</div>
           <button class="btn" onclick="closeModal();importData()" style="font-size:12px">Choose backup file…</button>
         </div>
       </div>
@@ -1413,7 +1649,7 @@ function handleImportFile(e){
                 <h3 style="margin:0">File exceeds demo limits</h3>
                 <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;color:var(--text3);padding:2px 4px;font-size:16px;line-height:1;border-radius:4px">✕</button>
               </div>
-              <p style="font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:0.75rem">This file contains ${d.goals.length} goals — the demo is limited to ${DEMO_GOAL_LIMIT} goals and ${DEMO_STEP_LIMIT} steps per goal.</p>
+              <p style="font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:0.75rem">This file contains ${d.goals.length} goals. The demo is limited to ${DEMO_GOAL_LIMIT} goals and ${DEMO_STEP_LIMIT} steps per goal.</p>
               <p style="font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:1.25rem">Create a free account to import files of any size.</p>
               <button class="btn btn-primary" onclick="window.location.href='spine-goals_login.html?mode=signup'" style="width:100%;padding:10px;font-size:13px;font-weight:500;margin-bottom:8px">Create a free account</button>
               <button class="btn" onclick="closeModal()" style="width:100%;padding:10px;font-size:13px;font-weight:500">Cancel</button>
@@ -1425,7 +1661,7 @@ function handleImportFile(e){
       goals=d.goals; gid=d.gid||1; sid=d.sid||1;
       render();
       alert('Imported successfully.');
-    } catch(err){ alert('Could not read that file — make sure it\'s a Goal Tracker export.'); }
+    } catch(err){ alert('Could not read that file. Make sure it\'s a Goal Tracker export.'); }
     e.target.value='';
   };
   reader.readAsText(file);
@@ -1447,13 +1683,13 @@ function openWelcome(){
     document.getElementById('modal-container').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeModal()">
       <div class="modal" style="width:380px;text-align:center;padding:2rem 1.75rem 1.5rem">
         ${logoSvg}
-        <div style="display:inline-block;margin:14px 0 16px;font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);background:var(--bg2);border:0.5px solid var(--border2);border-radius:20px;padding:3px 10px">Demo mode</div>
+        <div style="display:inline-block;margin:14px 0 16px;font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:3px 10px">Demo mode</div>
         <p style="font-size:13.5px;line-height:1.7;color:var(--text1);margin-bottom:1rem;text-align:left">
-          Welcome to Spine Goals — feel free to explore everything and try it out.
+          Welcome to Spine Goals! Feel free to explore everything and try it out.
         </p>
-        <div style="border:0.5px solid var(--border1);border-radius:var(--radius-md);padding:14px 16px;margin-bottom:1.25rem;text-align:left">
+        <div style="border:1px solid var(--border1);border-radius:var(--radius-md);padding:14px 16px;margin-bottom:1.25rem;text-align:left">
           <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.05em">Heads up</div>
-          <p style="font-size:13px;line-height:1.65;color:var(--text2);margin:0">You're in demo mode — your changes are only saved to this browser session and won't follow you across devices or visits. Create a free account to save your goals properly and access them anywhere.</p>
+          <p style="font-size:13px;line-height:1.65;color:var(--text2);margin:0">You're in demo mode. Your changes are only saved to this browser session and won't follow you across devices or visits. Create a free account to save your goals properly and access them anywhere.</p>
         </div>
         <button class="btn btn-primary" onclick="window.location.href='spine-goals_login.html?mode=signup'" style="width:100%;padding:10px;font-size:13px;font-weight:500;margin-bottom:8px">Create an account</button>
         <button class="btn" onclick="closeModal()" style="width:100%;padding:10px;font-size:13px;font-weight:500;margin-bottom:12px">Start exploring</button>
@@ -1465,15 +1701,15 @@ function openWelcome(){
     document.getElementById('modal-container').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeModal()">
       <div class="modal" style="width:380px;text-align:center;padding:2rem 1.75rem 1.5rem">
         ${logoSvg}
-        <div style="display:inline-block;margin:14px 0 16px;font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);background:var(--bg2);border:0.5px solid var(--border2);border-radius:20px;padding:3px 10px">Alpha Preview</div>
+        <div style="display:inline-block;margin:14px 0 16px;font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:3px 10px">Alpha Preview</div>
         <p style="font-size:13.5px;line-height:1.7;color:var(--text1);margin-bottom:1rem;text-align:left">
           Spine Goals is an early-access goal planning tool, currently in alpha and actively being built. You're viewing a live preview and things may change as we develop.
         </p>
-        <div style="border:0.5px solid var(--border1);border-radius:var(--radius-md);padding:14px 16px;margin-bottom:10px;text-align:left">
+        <div style="border:1px solid var(--border1);border-radius:var(--radius-md);padding:14px 16px;margin-bottom:10px;text-align:left">
           <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.05em">Sample data</div>
           <p style="font-size:13px;line-height:1.65;color:var(--text2);margin:0">The goals you see are examples to help you get familiar with the app. Feel free to edit or delete them and start fresh whenever you're ready.</p>
         </div>
-        <div style="border:0.5px solid var(--border1);border-radius:var(--radius-md);padding:14px 16px;margin-bottom:1.25rem;text-align:left">
+        <div style="border:1px solid var(--border1);border-radius:var(--radius-md);padding:14px 16px;margin-bottom:1.25rem;text-align:left">
           <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.05em">Your data is safe</div>
           <p style="font-size:13px;line-height:1.65;color:var(--text2);margin:0">Your goals are saved securely to your account and synced across your devices. We don't sell or share your data. You can also manually export a backup anytime from the <strong style="color:var(--text1)">menu &rsaquo; Data</strong> in the top right.</p>
         </div>
@@ -1507,7 +1743,7 @@ function openAccountModal(){
       <div style="margin-bottom:1rem">
         <div style="font-size:10px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Display name</div>
         <div style="display:flex;align-items:center;gap:8px">
-          <input id="acct-name" value="${name}" style="flex:1;font-size:13px;padding:7px 10px;border:0.5px solid var(--border2);border-radius:var(--radius-md);background:var(--bg2);color:var(--text1);font-family:var(--font)" placeholder="Your name">
+          <input id="acct-name" value="${name}" style="flex:1;font-size:13px;padding:7px 10px;border:1px solid var(--border2);border-radius:var(--radius-md);background:var(--bg2);color:var(--text1);font-family:var(--font)" placeholder="Your name">
           <button onclick="saveAccountName()" class="btn" style="font-size:12px;padding:6px 12px;flex-shrink:0">Save</button>
         </div>
         <div id="acct-name-msg" style="font-size:11px;margin-top:4px;min-height:14px"></div>
@@ -1517,22 +1753,22 @@ function openAccountModal(){
       <div style="margin-bottom:1.25rem">
         <div style="font-size:10px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Email</div>
         <div style="display:flex;align-items:center;gap:8px">
-          <input id="acct-email" value="${email}" style="flex:1;font-size:13px;padding:7px 10px;border:0.5px solid var(--border2);border-radius:var(--radius-md);background:var(--bg2);color:var(--text1);font-family:var(--font)" placeholder="email@example.com">
+          <input id="acct-email" value="${email}" style="flex:1;font-size:13px;padding:7px 10px;border:1px solid var(--border2);border-radius:var(--radius-md);background:var(--bg2);color:var(--text1);font-family:var(--font)" placeholder="email@example.com">
           <button onclick="saveAccountEmail()" class="btn" style="font-size:12px;padding:6px 12px;flex-shrink:0">Save</button>
         </div>
         <div id="acct-email-msg" style="font-size:11px;margin-top:4px;min-height:14px;color:var(--text3)">Changing your email will require re-confirmation.</div>
       </div>
 
       <!-- Data -->
-      <div style="border-top:0.5px solid var(--border1);padding-top:1rem;margin-bottom:1rem">
+      <div style="border-top:1px solid var(--border1);padding-top:1rem;margin-bottom:1rem">
         <div style="font-size:10px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Data</div>
         <button class="btn" onclick="closeModal();setTimeout(openDataModal,220)" style="font-size:12px;padding:7px 14px;width:100%">Import / Export data</button>
       </div>
 
       <!-- Account options -->
-      <div style="border-top:0.5px solid var(--border1);padding-top:1rem;display:flex;gap:8px;justify-content:space-between">
+      <div style="border-top:1px solid var(--border1);padding-top:1rem;display:flex;gap:8px;justify-content:space-between">
         <button class="btn" onclick="signOut()" style="font-size:12px;padding:7px 14px">Sign out</button>
-        <button onclick="openDeleteAccountModal()" style="font-size:12px;padding:7px 14px;background:none;border:0.5px solid #dc2626;color:#dc2626;border-radius:var(--radius-md);cursor:pointer;font-family:var(--font);transition:background 0.12s" onmouseover="this.style.background='rgba(220,38,38,0.06)'" onmouseout="this.style.background='none'">Delete account</button>
+        <button onclick="openDeleteAccountModal()" style="font-size:12px;padding:7px 14px;background:none;border:1px solid #dc2626;color:#dc2626;border-radius:var(--radius-md);cursor:pointer;font-family:var(--font);transition:background 0.12s" onmouseover="this.style.background='rgba(220,38,38,0.06)'" onmouseout="this.style.background='none'">Delete account</button>
       </div>
     </div>
   </div>`;
@@ -1619,7 +1855,7 @@ function openMenu(){
           <div>
             ${logoSvg}
             <div style="display:flex;align-items:center;gap:6px;margin-top:8px">
-              <span style="font-size:9px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--text3);background:var(--bg2);border:0.5px solid var(--border2);border-radius:20px;padding:2px 7px">Alpha</span>
+              <span style="font-size:9px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--text3);background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:2px 7px">Alpha</span>
               <span style="font-size:10px;color:var(--text3)">${APP_VERSION}</span>
             </div>
           </div>
@@ -1628,7 +1864,7 @@ function openMenu(){
 
         <!-- About -->
         <div class="menu-section" style="padding-top:14px;padding-bottom:14px">
-          <p style="font-size:12.5px;line-height:1.65;color:var(--text2);padding:0 10px">A simple step-by-step goal tracker built to take you from idea to done — one step at a time.</p>
+          <p style="font-size:12.5px;line-height:1.65;color:var(--text2);padding:0 10px">A simple step-by-step goal tracker built to take you from idea to done, one step at a time.</p>
         </div>
 
         <!-- Data -->
@@ -1680,7 +1916,7 @@ function openMenu(){
           <div class="menu-section-label">What's new</div>
           <div style="padding:4px 10px 6px">
             <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:3px">${APP_VERSION} · Mar 2026</div>
-            <p style="font-size:11.5px;line-height:1.6;color:var(--text3)">Demo limits (5 goals / 10 steps), unsaved indicator, import limit guard, and about modal on logo.</p>
+            <p style="font-size:11.5px;line-height:1.6;color:var(--text3)">Rich notes with <b style="font-weight:500;color:var(--text2)">⌘B</b> bold, <b style="font-weight:500;color:var(--text2)">⌘I</b> italic &amp; live link detection. Bare URLs (example.com) auto-link. Press <b style="font-weight:500;color:var(--text2)">G</b> anywhere to create a new goal.</p>
           </div>
         </div>
 
@@ -1710,7 +1946,7 @@ function openMenu(){
           <p style="font-size:11px;color:var(--text3);padding:0 10px;margin-bottom:14px">
             <a href="mailto:support@spinegoals.com" style="color:var(--text3);text-decoration:underline;text-underline-offset:2px;text-decoration-color:transparent;transition:text-decoration-color 0.15s" onmouseover="this.style.textDecorationColor='currentColor'" onmouseout="this.style.textDecorationColor='transparent'">support@spinegoals.com</a>
           </p>
-          <div style="border-top:0.5px solid var(--border1);padding-top:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px">
+          <div style="border-top:1px solid var(--border1);padding-top:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px">
             <div style="display:flex;align-items:center;gap:12px">
               <button onclick="closeMenu();setTimeout(openPrivacyModal,220)" style="background:none;border:none;cursor:pointer;font-size:11px;color:var(--text3);padding:0;text-underline-offset:2px;text-decoration:underline;text-decoration-color:transparent;transition:text-decoration-color 0.15s" onmouseover="this.style.textDecorationColor='currentColor'" onmouseout="this.style.textDecorationColor='transparent'">Privacy policy</button>
               <button onclick="closeMenu();setTimeout(openTermsModal,220)" style="background:none;border:none;cursor:pointer;font-size:11px;color:var(--text3);padding:0;text-underline-offset:2px;text-decoration:underline;text-decoration-color:transparent;transition:text-decoration-color 0.15s" onmouseover="this.style.textDecorationColor='currentColor'" onmouseout="this.style.textDecorationColor='transparent'">Terms</button>
@@ -1738,13 +1974,13 @@ function openAboutModal(){
     <div class="modal" style="width:360px">
       <div style="margin-bottom:1.25rem">
         ${logoSvg}
-        <div style="display:inline-flex;align-items:center;background:var(--bg2);border:0.5px solid var(--border2);border-radius:20px;padding:3px 10px;font-size:10px;color:var(--text2);letter-spacing:0.04em;margin-bottom:0.75rem">Alpha</div>
+        <div style="display:inline-flex;align-items:center;background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:3px 10px;font-size:10px;color:var(--text2);letter-spacing:0.04em;margin-bottom:0.75rem">Alpha</div>
       </div>
       <p style="font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:0.6rem">Spine Goals is a goal-tracking app built around one idea: big goals happen in steps.</p>
-      <p style="font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:0.6rem">Map out each step of a goal, mark what's done, what's blocked, and what's waiting — and see at a glance exactly where things stand across everything you're working toward.</p>
+      <p style="font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:0.6rem">Map out each step of a goal, mark what's done, what's blocked, and what's waiting. And see at a glance exactly where things stand across everything you're working toward.</p>
       <p style="font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:1rem">This is an early alpha. Things will change, but the core idea is here and working.</p>
-      <div style="border-top:0.5px solid var(--border1);padding-top:0.75rem;margin-bottom:1rem">
-        <p style="font-size:11px;color:var(--text3);line-height:1.6">Questions or feedback? <a href="mailto:support@spinegoals.com" style="color:var(--text2);text-decoration:none;border-bottom:0.5px solid var(--border2)">support@spinegoals.com</a></p>
+      <div style="border-top:1px solid var(--border1);padding-top:0.75rem;margin-bottom:1rem">
+        <p style="font-size:11px;color:var(--text3);line-height:1.6">Questions or feedback? <a href="mailto:support@spinegoals.com" style="color:var(--text2);text-decoration:none;border-bottom:1px solid var(--border2)">support@spinegoals.com</a></p>
       </div>
       <div class="modal-actions">
         <button class="btn" onclick="closeModal()">Close</button>
@@ -1760,12 +1996,12 @@ function openPrivacyModal(){
       <p style="font-size:11px;color:var(--text3);margin-bottom:1rem">Last updated: March 23, 2026</p>
       <ul style="font-size:13px;line-height:1.75;color:var(--text2);padding-left:1.2rem;margin-bottom:1.25rem">
         <li style="margin-bottom:0.5rem">We collect your email address and the goals and steps you create</li>
-        <li style="margin-bottom:0.5rem">Your data is stored securely on Supabase — we don't sell or share it</li>
+        <li style="margin-bottom:0.5rem">Your data is stored securely on Supabase. We don't sell or share it</li>
         <li style="margin-bottom:0.5rem">We use Google Analytics to understand how the app is used (anonymised)</li>
         <li>You can request account deletion at any time by emailing <a href="mailto:support@spinegoals.com" style="color:var(--text2)">support@spinegoals.com</a></li>
       </ul>
       <div class="modal-actions" style="justify-content:space-between;align-items:center">
-        <a href="/privacy.html" target="_blank" rel="noopener" style="font-size:12px;color:var(--text3);text-decoration:none;border-bottom:0.5px solid var(--border2);padding-bottom:1px" onmouseover="this.style.color='var(--text2)'" onmouseout="this.style.color='var(--text3)'">Read full policy ↗</a>
+        <a href="/privacy.html" target="_blank" rel="noopener" style="font-size:12px;color:var(--text3);text-decoration:none;border-bottom:1px solid var(--border2);padding-bottom:1px" onmouseover="this.style.color='var(--text2)'" onmouseout="this.style.color='var(--text3)'">Read full policy ↗</a>
         <button class="btn" onclick="closeModal()">Close</button>
       </div>
     </div>
@@ -1778,13 +2014,13 @@ function openTermsModal(){
       <h3 style="margin-bottom:1rem">Terms of Service</h3>
       <p style="font-size:11px;color:var(--text3);margin-bottom:1rem">Last updated: March 23, 2026</p>
       <ul style="font-size:13px;line-height:1.75;color:var(--text2);padding-left:1.2rem;margin-bottom:1.25rem">
-        <li style="margin-bottom:0.5rem">Use Spine Goals for personal goal tracking — commercial resale is not permitted</li>
+        <li style="margin-bottom:0.5rem">Use Spine Goals for personal goal tracking. Commercial resale is not permitted</li>
         <li style="margin-bottom:0.5rem">You own your data; we need it only to provide the service</li>
         <li style="margin-bottom:0.5rem">The service is provided as-is; liability is limited to $100</li>
         <li>Users must be 13 or older</li>
       </ul>
       <div class="modal-actions" style="justify-content:space-between;align-items:center">
-        <a href="/terms.html" target="_blank" rel="noopener" style="font-size:12px;color:var(--text3);text-decoration:none;border-bottom:0.5px solid var(--border2);padding-bottom:1px" onmouseover="this.style.color='var(--text2)'" onmouseout="this.style.color='var(--text3)'">Read full terms ↗</a>
+        <a href="/terms.html" target="_blank" rel="noopener" style="font-size:12px;color:var(--text3);text-decoration:none;border-bottom:1px solid var(--border2);padding-bottom:1px" onmouseover="this.style.color='var(--text2)'" onmouseout="this.style.color='var(--text3)'">Read full terms ↗</a>
         <button class="btn" onclick="closeModal()">Close</button>
       </div>
     </div>
