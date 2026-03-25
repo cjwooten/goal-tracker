@@ -93,8 +93,8 @@
     margin-bottom: 1.5rem;
   }
 
-  .btn-new-goal { transition: background 0.15s, border-color 0.15s, color 0.15s; }
-  .btn-new-goal:hover { background: #1D9E75 !important; border-color: #1D9E75 !important; color: #fff !important; }
+  .btn-new-goal { border-color: #1D9E75 !important; color: #1D9E75 !important; transition: background 0.15s, border-color 0.15s, color 0.15s; }
+  .btn-new-goal:hover, .btn-new-goal:active { background: #1D9E75 !important; border-color: #1D9E75 !important; color: #fff !important; }
   .btn {
     background: var(--bg); border: 0.5px solid var(--border2);
     border-radius: var(--radius-md); padding: 7px 16px;
@@ -911,7 +911,7 @@ function renderGoal(g,idx,activeGoals){
       ${ring(p,gs)}
       <div class="goal-meta">
         <div class="goal-name"><span class="goal-name-view" onclick="event.stopPropagation();editGoalName(${g.id})" title="Click to rename">${g.name}</span></div>
-        <div class="goal-sub">${done} of ${g.steps.length} steps complete${rem?` · ${rem} remaining`:''}${g.dueDate?` · <span class="goal-due-badge" onclick="event.stopPropagation();editGoalDate(${g.id})" title="Click to edit target date">Due ${formatDueDate(g.dueDate)}</span>`:`<span class="goal-due-add" onclick="event.stopPropagation();editGoalDate(${g.id})" title="Set target date"> · target date</span>`}</div>
+        <div class="goal-sub">${done} of ${g.steps.length} steps complete${rem?` · ${rem} remaining`:''}${g.dueDate?` · <span class="goal-due-badge" onclick="event.stopPropagation();editGoalDate(${g.id})" title="Click to edit target date"><i>target:</i> ${formatDueDate(g.dueDate)}</span>`:`<span class="goal-due-add" onclick="event.stopPropagation();editGoalDate(${g.id})" title="Set target date"> · target date</span>`}</div>
         <div id="gn-${g.id}" class="goal-note${g.note?' has-note':''}" onclick="event.stopPropagation();editGoalNote(${g.id})" title="${g.note?'Click to edit note':'Click to add a note'}">${g.note?linkify(g.note):'+ note'}</div>
       </div>
       ${moveBtns}
