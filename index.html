@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Spine Goals · v3.8.2 · 2026-03-24 · rich notes + live link + border fix -->
+<!-- Spine Goals · v3.8.3 · 2026-03-24 · status picker popover -->
 <html lang="en">
 <head>
 <!-- Google tag (gtag.js) -->
@@ -219,32 +219,62 @@
   .step-meta { display: flex; align-items: center; gap: 6px; margin-top: 3px; flex-wrap: wrap; }
   .step-dur {
     font-size: 11px; color: var(--text2); cursor: text;
-    border-radius: 20px; padding: 2px 8px;
+    border-radius: 20px; padding: 2px 8px; line-height: 1;
     border: 1px solid var(--border2); background: var(--bg2);
     display: inline-flex; align-items: center;
-    transition: background 0.12s, border-color 0.12s;
+    transition: background 0.12s, border-color 0.12s, opacity 0.12s;
   }
   .step-dur:hover { background: var(--bg3); border-color: var(--border3); }
-  .step-dur.placeholder { color: var(--text3); font-style: italic; border-color: var(--border1); background: transparent; }
+  .step-dur.placeholder { color: var(--text3); background: transparent; border-color: var(--border1); opacity: 0.5; font-style: italic; }
+  .step-row:hover .step-dur.placeholder { opacity: 0.85; }
+  .step-dur.placeholder:hover { background: var(--bg2); border-color: var(--border2); opacity: 1; }
   .step-dur.placeholder:hover { background: var(--bg2); border-color: var(--border2); }
   .step-dur-input { font-size: 11px; font-family: var(--font); color: var(--text2); border: 1px solid var(--border3); border-radius: 20px; padding: 2px 8px; background: var(--bg); outline: none; width: 110px; }
 
   .step-due {
     font-size: 11px; color: var(--text2); cursor: pointer;
-    border-radius: 20px; padding: 2px 8px;
+    border-radius: 20px; padding: 2px 8px; line-height: 1;
     border: 1px solid var(--border2); background: var(--bg2);
     display: inline-flex; align-items: center;
     transition: background 0.12s, border-color 0.12s, opacity 0.15s;
   }
   .step-due:hover { background: var(--bg3); border-color: var(--border3); }
-  .step-due.placeholder { color: var(--text3); font-style: italic; border-color: var(--border1); background: transparent; opacity: 0.22; }
-  .step-row:hover .step-due.placeholder { opacity: 1; }
+  .step-due.placeholder { color: var(--text3); background: transparent; border-color: var(--border1); opacity: 0.5; font-style: italic; }
+  .step-row:hover .step-due.placeholder { opacity: 0.85; }
+  .step-due.placeholder:hover { background: var(--bg2); border-color: var(--border2); opacity: 1; }
   .step-due-input { font-size: 11px; font-family: var(--font); color: var(--text2); border: 1px solid var(--border3); border-radius: 20px; padding: 2px 8px; background: var(--bg); outline: none; cursor: pointer; }
 
-  .tag { font-size: 10px; padding: 2px 8px; border-radius: 20px; border: 1px solid; font-weight: 500; }
-  .tag-wait   { background: #dbeeff; color: #1d4ed8; border-color: #93c5fd; }
-  .tag-active { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
-  .tag-done   { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
+  .tag { font-size: 11px; padding: 2px 8px; border-radius: 20px; border: 1px solid; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; line-height: 1; user-select: none; transition: opacity 0.12s; }
+  .tag-wait    { background: #dbeeff; color: #1d4ed8; border-color: #93c5fd; }
+  .tag-active  { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
+  .tag-done    { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
+  .tag-blocked { background: transparent; color: var(--text3); border-color: var(--border2); opacity: 0.5; }
+  .step-row:hover .tag-blocked { opacity: 0.85; }
+
+  /* ── Status picker popover ──────────────────────────────────────────────── */
+  .status-picker {
+    position: fixed; z-index: 200;
+    background: var(--bg); border: 1px solid var(--border2);
+    border-radius: var(--radius-md); padding: 4px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.13), 0 1px 4px rgba(0,0,0,0.07);
+    min-width: 136px;
+    animation: sp-in 0.1s cubic-bezier(0.2,0,0.2,1);
+  }
+  @keyframes sp-in {
+    from { opacity: 0; transform: translateY(-4px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0)  scale(1); }
+  }
+  .sp-opt {
+    display: flex; align-items: center; gap: 8px;
+    width: 100%; padding: 6px 9px;
+    background: none; border: none; cursor: pointer; text-align: left;
+    font-size: 12px; font-family: var(--font); color: var(--text1);
+    border-radius: 6px; line-height: 1;
+  }
+  .sp-opt:hover { background: var(--bg2); }
+  .sp-opt .tag { opacity: 1; pointer-events: none; }
+  .sp-opt:hover .tag { opacity: 1; }
+  .sp-check { margin-left: auto; color: var(--text3); flex-shrink: 0; }
 
   .step-actions { display: flex; align-items: center; gap: 4px; margin-top: 5px; }
   .step-action-btn { background: none; border: none; cursor: pointer; color: var(--text3); padding: 2px 3px; border-radius: 4px; display: inline-flex; align-items: center; opacity: 0; transition: opacity 0.15s, color 0.15s, background 0.15s; flex-shrink: 0; }
@@ -438,7 +468,7 @@
     .goal-name-view { pointer-events: none; cursor: default; }
     .goal-name-view:hover { background: transparent; }
     .drag-handle { display: none; }
-    .step-move-btns { display: flex; gap: 2px; align-self: flex-start; margin-top: -2px; }
+    .step-move-btns { display: flex; gap: 2px; align-self: flex-start; margin-top: -7px; }
     .step-move-btn { padding: 4px 10px; position: relative; }
     .step-move-btn:first-child::after { content: ''; position: absolute; inset: -18px -8px -4px -8px; }
     .step-move-btn:last-child::after { content: ''; position: absolute; inset: -4px -8px -18px -8px; }
@@ -448,6 +478,9 @@
     .goal-header > svg { width: 40px; height: 40px; }
     .add-input { font-size: 13px; padding: 4px 10px; }
     .add-input:focus { font-size: 16px !important; padding: 8px 12px; }
+  }
+  @media (pointer: coarse) {
+    .kbd-hint { display: none; }
   }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -461,7 +494,7 @@
     </svg>
     <div style="display:flex;gap:10px;align-items:center">
       <div id="save-status" class="save-status" aria-live="polite"></div>
-      <button class="btn btn-new-goal" onclick="openNewGoal()" style="font-size:12px;padding:5px 14px">New goal <span style="opacity:0.5;font-size:10px;font-weight:400;letter-spacing:0.02em">(G)</span></button>
+      <button class="btn btn-new-goal" onclick="openNewGoal()" style="font-size:12px;padding:5px 14px">New goal <span class="kbd-hint" style="opacity:0.5;font-size:10px;font-weight:400;letter-spacing:0.02em">(G)</span></button>
       <button class="btn btn-menu" onclick="openMenu()" title="Menu" aria-label="Open menu" style="margin-left:-6px">
         <svg width="15" height="12" viewBox="0 0 15 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
           <line x1="0" y1="1" x2="15" y2="1"/><line x1="0" y1="6" x2="15" y2="6"/><line x1="0" y1="11" x2="15" y2="11"/>
@@ -1004,9 +1037,10 @@ function renderNote(str,stripBr=false){
 
 function renderStep(g,s,isFirst,isLast,nextS,chainBroken=false){
   const lineClass=!nextS?'blocked':chainBroken?'blocked':spineLineClass(s.status,nextS.status);
-  const tag=s.status==='active'?`<span class="tag tag-active">to do</span>`
-           :s.status==='waiting'?`<span class="tag tag-wait">waiting</span>`
-           :s.status==='done'?`<span class="tag tag-done">done</span>`:'';
+  const tag=s.status==='active'  ?`<span class="tag tag-active"  onclick="openStatusPicker(${g.id},${s.id},event)">to do</span>`
+           :s.status==='waiting' ?`<span class="tag tag-wait"    onclick="openStatusPicker(${g.id},${s.id},event)">waiting</span>`
+           :s.status==='done'    ?`<span class="tag tag-done"    onclick="openStatusPicker(${g.id},${s.id},event)">done</span>`
+           :                      `<span class="tag tag-blocked" onclick="openStatusPicker(${g.id},${s.id},event)">not started</span>`;
   return`<div class="step-row" id="sr-${g.id}-${s.id}" draggable="true"
     ondragstart="dStart(event,${g.id},${s.id})" ondragend="dEnd()"
     ondragover="dOver(event,${g.id},${s.id})" ondrop="dDrop(event,${g.id},${s.id})">
@@ -1300,6 +1334,51 @@ function editGoalName(id){
     if(e.key==='Escape'){inp.value=g.name;inp.blur();}
   });
 }
+// ── Status picker popover ─────────────────────────────────────────────────────
+function openStatusPicker(gId,sId,e){
+  e.stopPropagation();
+  const existing=document.getElementById('status-picker');
+  if(existing){existing.remove();return;} // toggle off if already open
+  const g=goals.find(x=>x.id===gId),s=g.steps.find(x=>x.id===sId);
+  const OPTS=[
+    {status:'blocked', cls:'tag-blocked', label:'not started'},
+    {status:'active',  cls:'tag-active',  label:'to do'},
+    {status:'waiting', cls:'tag-wait',    label:'waiting'},
+    {status:'done',    cls:'tag-done',    label:'done'},
+  ];
+  const CHECK=`<svg class="sp-check" width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,5.5 4.5,8.5 9.5,2.5"/></svg>`;
+  const picker=document.createElement('div');
+  picker.className='status-picker';picker.id='status-picker';
+  OPTS.forEach(opt=>{
+    const btn=document.createElement('button');
+    btn.className='sp-opt'+(s.status===opt.status?' sp-current':'');
+    btn.innerHTML=`<span class="tag ${opt.cls}">${opt.label}</span>${s.status===opt.status?CHECK:''}`;
+    btn.onclick=ev=>{
+      ev.stopPropagation();
+      s.status=opt.status;
+      picker.remove();
+      document.removeEventListener('click',spClose);
+      document.removeEventListener('keydown',spEsc);
+      render();
+    };
+    picker.appendChild(btn);
+  });
+  document.body.appendChild(picker);
+  // Position below pill, flip up if near bottom, clamp horizontal
+  const rect=e.currentTarget.getBoundingClientRect();
+  const ph=picker.offsetHeight||144;
+  let top=rect.bottom+5, left=rect.left;
+  if(top+ph>window.innerHeight-8)top=rect.top-ph-5;
+  if(left+148>window.innerWidth-8)left=window.innerWidth-156;
+  if(left<8)left=8;
+  picker.style.top=top+'px';picker.style.left=left+'px';
+  // Close on outside click or Escape
+  let spClose,spEsc;
+  spClose=ev=>{if(!picker.contains(ev.target)){picker.remove();document.removeEventListener('click',spClose);document.removeEventListener('keydown',spEsc);}};
+  spEsc=ev=>{if(ev.key==='Escape'){picker.remove();document.removeEventListener('click',spClose);document.removeEventListener('keydown',spEsc);}};
+  setTimeout(()=>{document.addEventListener('click',spClose);document.addEventListener('keydown',spEsc);},0);
+}
+// ─────────────────────────────────────────────────────────────────────────────
 function editTitle(gId,sId){
   const g=goals.find(x=>x.id===gId),s=g.steps.find(x=>x.id===sId);
   const view=document.getElementById(`tv-${gId}-${sId}`);if(!view)return;
