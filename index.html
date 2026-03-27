@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Spine Goals · v3.8.5 · 2026-03-26 · inline goal date picker · touch breakpoint -->
+<!-- Spine Goals · v3.8.6 · 2026-03-26 · hide step · goal menu cleanup -->
 <html lang="en">
 <head>
 <!-- Google tag (gtag.js) -->
@@ -190,6 +190,8 @@
   .sp-check { margin-left: auto; color: var(--text3); flex-shrink: 0; }
 
   .step-actions { display: flex; align-items: center; gap: 4px; margin-top: 5px; }
+  .step-row.step-hidden-revealed { opacity: 0.45; }
+  .hidden-steps-toggle { padding: 5px 0 6px; font-size: 11px; font-style: italic; color: var(--text3); cursor: pointer; user-select: none; margin-bottom: 4px; }
   .step-action-btn { background: none; border: none; cursor: pointer; color: var(--text3); padding: 2px 3px; border-radius: 4px; display: inline-flex; align-items: center; opacity: 0; transition: opacity 0.15s, color 0.15s, background 0.15s; flex-shrink: 0; }
 
   /* ── Step & goal notes ─────────────────────────────────────────────────── */
@@ -376,6 +378,8 @@
     .step-action-btn:hover { color: var(--text1) !important; background: var(--bg2); }
     .step-del-btn:hover  { color: #dc2626 !important; background: #fee2e2; }
     .step-dup-btn:hover  { color: #185FA5 !important; background: #dbeeff; }
+    .step-hide-btn:hover { color: var(--text2) !important; background: var(--bg2); }
+    .hidden-steps-toggle:hover { color: var(--text1); }
     .step-row:hover .step-note { opacity: 0.55; }
     .step-row:hover .step-note.has-note { opacity: 1; }
     .step-note:hover { background: var(--bg2); }
@@ -671,6 +675,7 @@ async function load(){
 }
 
 let goals=[];
+const expandedHidden=new Set();
 
 function pill(label, onclick) {
   return `<span onclick="${onclick}" style="
@@ -688,7 +693,7 @@ function goalStatus(g){
   if(g.steps.find(s=>s.status==='waiting'))return'waiting';
   return'blocked';
 }
-function nextStep(g){return g.steps.find(s=>s.status==='active'||s.status==='waiting');}
+function nextStep(g){return g.steps.find(s=>!s.hidden&&(s.status==='active'||s.status==='waiting'));}
 function pct(g){return!g.steps.length?0:Math.round(g.steps.filter(s=>s.status==='done').length/g.steps.length*100);}
 
 // ── Duration utilities ───────────────────────────────────────────────────────
@@ -788,6 +793,8 @@ const ICON_UNARCHIVE=`<svg width="13" height="13" viewBox="0 0 13 13" fill="none
 const ICON_TRASH    =`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,3 11.5,3"/><path d="M4 3V2a.5.5 0 0 1 .5-.5h4A.5.5 0 0 1 9 2v1"/><rect x="2.5" y="3" width="8" height="8.5" rx="1"/><line x1="5" y1="5.5" x2="5" y2="9.5"/><line x1="8" y1="5.5" x2="8" y2="9.5"/></svg>`;
 const ICON_COPY     =`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="4.5" width="7" height="7" rx="1"/><path d="M2.5 8.5H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5a1 1 0 0 1 1 1v.5"/></svg>`;
 const ICON_MENU     =`<svg width="15" height="15" viewBox="0 0 15 15" fill="currentColor"><circle cx="3.5" cy="7.5" r="1.35"/><circle cx="7.5" cy="7.5" r="1.35"/><circle cx="11.5" cy="7.5" r="1.35"/></svg>`;
+const ICON_EYE_SLASH=`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="2" x2="11" y2="11"/><path d="M4.8 3.6C2.7 4.6 1 6.5 1 6.5s2 3.5 5.5 3.5c.9 0 1.8-.2 2.5-.5"/><path d="M8 3A5.4 5.4 0 0 1 12 6.5c-.3.6-.8 1.2-1.4 1.8"/></svg>`;
+const ICON_EYE      =`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6.5c1.5-2.5 3.2-3.5 5.5-3.5s4 1 5.5 3.5c-1.5 2.5-3.2 3.5-5.5 3.5s-4-1-5.5-3.5z"/><circle cx="6.5" cy="6.5" r="1.5"/></svg>`;
 
 // Returns the "winning" line colour between two adjacent steps.
 // Rule: take the higher-ranked status; blocked always wins (stops the chain).
@@ -799,11 +806,13 @@ function spineLineClass(a, b){
 
 function renderSpineOnly(g){
   if(!g.steps.length) return `<div class="spine-only"><span style="font-size:12px;color:var(--text3)">No steps yet — click to expand and add one.</span></div>`;
+  const vis=g.steps.filter(s=>!s.hidden);
+  if(!vis.length) return `<div class="spine-only"><span style="font-size:12px;color:var(--text3)">All steps hidden — click to expand.</span></div>`;
   let dots='';
   let chainBroken=false;
-  g.steps.forEach((s,i)=>{
+  vis.forEach((s,i)=>{
     if(i>0){
-      const prev=g.steps[i-1];
+      const prev=vis[i-1];
       const lc=chainBroken?'blocked':spineLineClass(prev.status, s.status);
       dots+=`<div class="spine-line-sm ${lc}"></div>`;
     }
@@ -979,7 +988,7 @@ function renderStep(g,s,isFirst,isLast,nextS,chainBroken=false){
            :s.status==='waiting' ?`<span class="tag tag-wait"    onclick="openStatusPicker(${g.id},${s.id},event)">waiting</span>`
            :s.status==='done'    ?`<span class="tag tag-done"    onclick="openStatusPicker(${g.id},${s.id},event)">done</span>`
            :                      `<span class="tag tag-blocked" onclick="openStatusPicker(${g.id},${s.id},event)">not started</span>`;
-  return`<div class="step-row" id="sr-${g.id}-${s.id}" draggable="true"
+  return`<div class="step-row${s.hidden?' step-hidden-revealed':''}" id="sr-${g.id}-${s.id}" draggable="true"
     ondragstart="dStart(event,${g.id},${s.id})" ondragend="dEnd()"
     ondragover="dOver(event,${g.id},${s.id})" ondrop="dDrop(event,${g.id},${s.id})">
     <div class="step-move-btns" onclick="event.stopPropagation()">
@@ -1003,6 +1012,7 @@ function renderStep(g,s,isFirst,isLast,nextS,chainBroken=false){
         ${pill('+ before',`insertStepInline(${g.id},${s.id},true)`)}
         ${pill('+ after',`insertStepInline(${g.id},${s.id})`)}
         <button class="step-action-btn step-dup-btn" onclick="duplicateStep(${g.id},${s.id})" title="Duplicate step">${ICON_COPY}</button>
+        <button class="step-action-btn step-hide-btn" onclick="toggleHideStep(${g.id},${s.id})" title="${s.hidden?'Show step':'Hide step'}">${s.hidden?ICON_EYE:ICON_EYE_SLASH}</button>
         <button class="step-action-btn step-del-btn" onclick="openDeleteStep(${g.id},${s.id})" title="Delete step">${ICON_TRASH}</button>
       </div>
     </div>
@@ -1033,7 +1043,7 @@ function renderGoal(g,idx,activeGoals){
         </div>
       </div>`:''}
      <div class="progress-bar"><div class="progress-fill" style="width:${p}%"></div></div>
-     <div class="steps-wrap">${(()=>{let cb=false;return g.steps.map((s,i)=>{const r=renderStep(g,s,i===0,i===g.steps.length-1,g.steps[i+1]||null,cb);if(s.status==='blocked')cb=true;return r;}).join('');})()}</div>
+     <div class="steps-wrap">${(()=>{const showH=expandedHidden.has(g.id);const vis=showH?g.steps:g.steps.filter(s=>!s.hidden);const hc=g.steps.filter(s=>s.hidden).length;let cb=false;const rows=vis.map((s,i)=>{const r=renderStep(g,s,i===0,i===vis.length-1,vis[i+1]||null,cb);if(s.status==='blocked')cb=true;return r;}).join('');const togText=showH?'\u25b2 hide '+hc+' step'+(hc>1?'s':''):hc+' hidden step'+(hc>1?'s':'');const tog=hc?'<div class="hidden-steps-toggle" onclick="event.stopPropagation();toggleHiddenSteps('+g.id+')">'+togText+'</div>':'';return tog+rows;})()}</div>
      <div class="add-row"><input class="add-input" id="ai-${g.id}" placeholder="+ add step" onkeydown="handleAdd(event,${g.id})" onblur="handleAdd(event,${g.id})"></div>`
     :renderSpineOnly(g);
 
@@ -1057,12 +1067,16 @@ function renderGoal(g,idx,activeGoals){
   </div>`;
 }
 
-function renderArchivedGoal(g){
+function renderArchivedGoal(g,idx,arcLen){
   const p=pct(g);
   const done=g.steps.filter(s=>s.status==='done').length;
   const rem=goalRemainingDur(g);
-  const unarchiveBtn=`<button class="goal-icon-btn goal-archive-btn" onclick="doUnarchiveGoal(${g.id})" title="Restore goal">${ICON_UNARCHIVE}</button>`;
+  const moveBtns=`<div class="goal-move-btns" onclick="event.stopPropagation()">
+    <button class="goal-icon-btn" onclick="moveArchivedGoal(${g.id},-1)" title="Move up" ${idx===0?'disabled':''}><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,7 5.5,3.5 9,7"/></svg></button>
+    <button class="goal-icon-btn" onclick="moveArchivedGoal(${g.id},1)" title="Move down" ${idx===arcLen-1?'disabled':''}><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,4 5.5,7.5 9,4"/></svg></button>
+  </div>`;
   const dupBtn      =`<button class="goal-icon-btn goal-dup-btn"     onclick="openDuplicateGoal(${g.id})" title="Duplicate goal">${ICON_COPY}</button>`;
+  const unarchiveBtn=`<button class="goal-icon-btn goal-archive-btn" onclick="doUnarchiveGoal(${g.id})" title="Restore goal">${ICON_UNARCHIVE}</button>`;
   const trashBtn    =`<button class="goal-icon-btn goal-del-btn"     onclick="openDeleteGoal(${g.id})" title="Delete goal">${ICON_TRASH}</button>`;
   const menuBtn     =`<button class="goal-menu-btn" onclick="openGoalMenu(${g.id},this,true)" title="Options">${ICON_MENU}</button>`;
   return`<div class="goal-card archived" id="gc-${g.id}">
@@ -1072,8 +1086,9 @@ function renderArchivedGoal(g){
         <div class="goal-name">${g.name}</div>
         <div class="goal-sub">${done} of ${g.steps.length} steps complete${rem?` · ${rem} remaining`:''}</div>
       </div>
-      ${unarchiveBtn}
+      ${moveBtns}
       ${dupBtn}
+      ${unarchiveBtn}
       ${trashBtn}
       ${menuBtn}
       <span class="status-badge s-archived">archived</span>
@@ -1091,7 +1106,7 @@ function render(silent=false){
     html+=active.map((g,i)=>renderGoal(g,i,active)).join('');
     if(archived.length){
       if(active.length) html+=`<div class="archived-divider"><span>Archived</span></div>`;
-      html+=archived.map(g=>renderArchivedGoal(g)).join('');
+      html+=archived.map((g,i)=>renderArchivedGoal(g,i,archived.length)).join('');
     }
   }
   document.getElementById('root').innerHTML=html;
@@ -1149,6 +1164,19 @@ function duplicateStep(gId,sId){
   render();
 }
 
+// ── Hide / unhide step ────────────────────────────────────────────────────────
+function toggleHideStep(gId,sId){
+  const g=goals.find(x=>x.id===gId);
+  const s=g.steps.find(x=>x.id===sId);
+  s.hidden=!s.hidden;
+  save();render();
+}
+function toggleHiddenSteps(gId){
+  if(expandedHidden.has(gId))expandedHidden.delete(gId);
+  else expandedHidden.add(gId);
+  render();
+}
+
 // ── Duplicate goal ───────────────────────────────────────────────────────────
 function openDuplicateGoal(id){
   const g=goals.find(x=>x.id===id);if(!g)return;
@@ -1197,6 +1225,16 @@ function moveGoal(id,dir){
   [goals[gi],goals[gni]]=[goals[gni],goals[gi]];
   render();
 }
+function moveArchivedGoal(id,dir){
+  const arc=goals.filter(g=>g.archived);
+  const i=arc.findIndex(x=>x.id===id);
+  const ni=i+dir;
+  if(ni<0||ni>=arc.length)return;
+  const gi=goals.indexOf(arc[i]);
+  const gni=goals.indexOf(arc[ni]);
+  [goals[gi],goals[gni]]=[goals[gni],goals[gi]];
+  save();render();
+}
 function moveStep(gId,sId,dir){
   const g=goals.find(x=>x.id===gId);
   const i=g.steps.findIndex(s=>s.id===sId);
@@ -1235,16 +1273,18 @@ function openGoalMenu(id,btn,archived){
     html+=menuItem(ICO_DN,'Move down',`closeModal();moveGoal(${id},1)`,idx===active.length-1);
     html+=sep;
     html+=menuItem(ICO_PEN,'Rename',`closeModal();editGoalName(${id})`);
-    html+=menuItem(ICO_CAL,g.dueDate?'Edit target date':'Set target date',`closeModal();editGoalDate(${id})`);
-    if(g.dueDate)html+=menuItem(ICO_CAL,'Clear target date',`closeModal();clearGoalDate(${id})`);
-    html+=menuItem(ICO_NOTE,g.note?'Edit note':'Add note',`closeModal();editGoalNote(${id})`);
     html+=menuItem(ICO_COPY,'Duplicate',`closeModal();openDuplicateGoal(${id})`);
     html+=menuItem(ICO_ARC,'Archive',`closeModal();openArchiveGoal(${id})`);
     html+=sep;
     html+=menuItem(ICO_DEL,'Delete',`closeModal();openDeleteGoal(${id})`,false,true);
   } else {
-    html+=menuItem(ICO_UNARC,'Unarchive',`closeModal();doUnarchiveGoal(${id})`);
+    const arc=goals.filter(x=>x.archived);
+    const aidx=arc.findIndex(x=>x.id===id);
+    html+=menuItem(ICO_UP,'Move up',`closeModal();moveArchivedGoal(${id},-1)`,aidx===0);
+    html+=menuItem(ICO_DN,'Move down',`closeModal();moveArchivedGoal(${id},1)`,aidx===arc.length-1);
+    html+=sep;
     html+=menuItem(ICO_COPY,'Duplicate',`closeModal();openDuplicateGoal(${id})`);
+    html+=menuItem(ICO_UNARC,'Unarchive',`closeModal();doUnarchiveGoal(${id})`);
     html+=sep;
     html+=menuItem(ICO_DEL,'Delete',`closeModal();openDeleteGoal(${id})`,false,true);
   }
@@ -1777,9 +1817,10 @@ function openAccountModal(){
         <button class="btn" onclick="closeModal();setTimeout(openDataModal,220)" style="font-size:12px;padding:7px 14px;width:100%">Import / Export data</button>
       </div>
 
-      <!-- Account options -->
-      <div style="border-top:1px solid var(--border1);padding-top:1rem;display:flex;gap:8px;justify-content:space-between">
-        <button class="btn" onclick="signOut()" style="font-size:12px;padding:7px 14px">Sign out</button>
+      <!-- Delete account -->
+      <div style="border-top:1px solid var(--border1);padding-top:1rem">
+        <div style="font-size:10px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Delete account</div>
+        <p style="font-size:11.5px;line-height:1.55;color:var(--text3);margin-bottom:10px">Permanently deletes your account and all goals. This cannot be undone — export your data first if you want to keep it.</p>
         <button onclick="openDeleteAccountModal()" style="font-size:12px;padding:7px 14px;background:none;border:1px solid #dc2626;color:#dc2626;border-radius:var(--radius-md);cursor:pointer;font-family:var(--font);transition:background 0.12s" onmouseover="this.style.background='rgba(220,38,38,0.06)'" onmouseout="this.style.background='none'">Delete account</button>
       </div>
     </div>
@@ -1920,6 +1961,14 @@ function openMenu(){
               </svg>
             </span>
             <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${currentUser?.user_metadata?.full_name||currentUser?.email||'Account'}</span>
+          </div>
+          <div class="menu-item" onclick="signOut()">
+            <span class="menu-item-icon">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 7H2M5.5 4.5L3 7l2.5 2.5"/><path d="M7 2h4.5A1.5 1.5 0 0113 3.5v7A1.5 1.5 0 0111.5 12H7"/>
+              </svg>
+            </span>
+            Sign out
           </div>`}
         </div>
 
@@ -1928,7 +1977,7 @@ function openMenu(){
           <div class="menu-section-label">What's new</div>
           <div style="padding:4px 10px 6px">
             <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:3px">${APP_VERSION} · Mar 2026</div>
-            <p style="font-size:11.5px;line-height:1.6;color:var(--text3)">Rich notes with <b style="font-weight:500;color:var(--text2)">⌘B</b> bold, <b style="font-weight:500;color:var(--text2)">⌘I</b> italic &amp; live link detection. Bare URLs (example.com) auto-link. Press <b style="font-weight:500;color:var(--text2)">G</b> anywhere to create a new goal.</p>
+            <p style="font-size:11.5px;line-height:1.6;color:var(--text3)"><b style="font-weight:500;color:var(--text2)">Hide steps</b> — tuck steps out of view without deleting. <b style="font-weight:500;color:var(--text2)">Archived goals</b> can now be reordered. Goal menu trimmed to essentials.</p>
           </div>
         </div>
 
